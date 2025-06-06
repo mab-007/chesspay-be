@@ -1,0 +1,49 @@
+- user
+- - user_id
+- - user_name
+- - user_account_id
+- - user_signup_date
+- - user_refferal_id
+- - user_raiting
+
+- contest
+- - contest_id
+- - contest_config
+- - contest_start_date
+- - contest_end_date
+- - contest_winnig_amount
+
+
+- game
+- - game_id
+- - game_type
+- - game_player_black
+- - game_player_white
+- - game_status
+- - game_moves
+
+- reward
+- - user_id
+- - reward_amount
+- - reward_status
+- - reward_type
+
+- transaction
+- - transaction_id
+- - user_id
+- - transaction_amount
+- - transaction_date
+- - transaction_type
+- - transaction_status
+- - transaction_code
+
+- account
+- - account_id
+- - user_id
+- - user_total_bal
+- - user_witdraw_elegible_bal
+
+- friends
+- friend_id
+- user_id
+

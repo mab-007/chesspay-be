@@ -1,0 +1,8 @@
+# Dependencies
+node_modules/
+
+# Compiled TypeScript output
+dist/
+
+# Environment variables
+.env
