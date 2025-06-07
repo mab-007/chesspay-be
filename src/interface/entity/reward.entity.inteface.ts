@@ -5,7 +5,7 @@ export interface IReward {
     reward_amount: number;
     reward_currency: string;
     reward_status: string;
-    reward_date: Date;
+    reward_date: number;
     reward_description?: string;
     reward_reference?: string;
     is_active: boolean;

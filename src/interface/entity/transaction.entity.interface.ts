@@ -6,10 +6,12 @@ export interface ITransaction {
     transaction_amount: number;
     transaction_currency: string;
     transaction_status: string;
-    transaction_date: Date;
+    transaction_date: number;
     transaction_description?: string;
     transaction_fee?: number;
     transaction_reference?: string;
+    transaction_reward?: number;
+    reward_id?: string
     is_active: boolean;
     created_at?: Date;
     updated_at?: Date;
