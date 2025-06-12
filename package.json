@@ -23,6 +23,7 @@
   "devDependencies": {
     "@types/express": "^5.0.2",
     "@types/node": "^22.15.30",
+    "@types/socket.io": "^3.0.1",
     "ts-node": "^10.9.2",
     "typescript": "^5.8.3"
   },
@@ -33,6 +34,7 @@
     "mongoose": "^8.15.1",
     "nodemon": "^3.1.10",
     "razorpay": "^2.9.6",
+    "socket.io": "^4.8.1",
     "winston": "^3.17.0"
   }
 }

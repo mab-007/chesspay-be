@@ -1,0 +1,7 @@
+- matchmaking
+- contest logics
+- share link for games feature
+- load game on links
+- wesocket connection
+- latency
+- payments
