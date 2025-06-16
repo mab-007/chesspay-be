@@ -6,6 +6,7 @@ import { Server as SocketIOServer } from 'socket.io';
 import http from 'http'; // Still needed if you want a fallback or for other purposes
 import initializeSocketIO from './internal/socket/socket.handler';
 import logger from './utils/logger';
+import redisClient from './utils/redis.client';
 
 const app = express();
 const port = process.env.PORT || 3000;
@@ -41,6 +42,8 @@ const startServer = async () => {
 
     await connectDB(); // Connect to MongoDB
     initializeSocketIO(io); // Initialize Socket.IO with the server instance
+
+    await redisClient.connect(); // Connect to Redis
 
     httpServer.listen(port, () => {
       // Use logger here instead of console.log for consistency, or keep console.log if preferred for startup

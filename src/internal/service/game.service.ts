@@ -1,3 +1,8 @@
+import logger from "../../utils/logger";
+import { addUserToMatchmakingQueue } from "../../utils/redis.client";
+import RealtimeMatchmaking from "../../worker/matchmaking/realtime.matchmaking.worker";
+import { Server, Socket } from "socket.io";
+
 type GameOutcome = 'W' | 'L' | 'D'; // Win, Loss, Draw
 
 interface PlayerStats {
@@ -28,6 +33,11 @@ const MAX_RATING_ITERATIONS = 10; // Max attempts to widen rating gap (e.g., up 
 // const MAX_RATING = 3000;
 
 class GameService {
+
+    private realtimeMatchmakingService = new RealtimeMatchmaking();
+    
+
+
 
     private calculateStreakSimilarity(streak1: GameOutcome[], streak2: GameOutcome[]): number {
         let similarity = 0;
@@ -126,6 +136,83 @@ class GameService {
         }
 
         return null; // No suitable match found after all iterations
+    }
+
+    // public handleJoinRoom = () => {
+    //     if (socket && roomToJoin && username) {
+    //         socket.emit('joinRoom', { roomId: roomToJoin, username }, (response: { status: string; message?: string; room?: any }) => {
+    //             if (response.status === 'success' && response.room) {
+    //                 setGameMessage(`Joined room: ${response.room.id}.`);
+    //                 console.log('Joined room:', response.room);
+    //                 // gameStart event will handle setting up player colors and turn
+    //             } else {
+    //                 setGameMessage(`Error joining room: ${response.message}`);
+    //                 console.error('Error joining room:', response.message);
+    //             }
+    //         });
+    //     }
+    // };
+
+    // const handleCreateRoom = () => {
+    //     if (socket && username) {
+    //         socket.emit('createRoom', { username }, (response: { roomId?: string; error?: string }) => {
+    //             if (response.roomId) {
+    //                 setRoomId(response.roomId);
+    //                 setGameMessage(`Room created: ${response.roomId}. Waiting for opponent...`);
+    //                 console.log('Room created:', response.roomId);
+    //             } else {
+    //                 setGameMessage(`Error creating room: ${response.error}`);
+    //                 console.error('Error creating room:', response.error);
+    //             }
+    //         });
+    //     }
+    // };
+
+    public async  createAndJoinRoom(socket: Socket, player_one_id: String, player_two_id: String) : Promise<Boolean> {
+        try { 
+
+            if (socket && player_one_id && player_two_id) {
+                let roomId : String | null = null;
+                await socket.emit('createRoom', { player_one_id }, (response: { roomId?: string; error?: string }) => {
+                    if (response.roomId) {
+                        roomId = response.roomId;
+                    } else {
+                        console.error('Error creating room:', response.error);
+                        throw Error('Error creating room');
+                    }
+                });
+                
+                if(roomId) {
+                    await socket.emit('joinRoom', { roomId, player_two_id }, (response: { status: string; message?: string; room?: any }) => {
+                        if (response.status === 'success' && response.room) {
+                            logger.info(`Joined room: ${response.room.id}.`);
+                            logger.info('Joined room:', response.room);
+                            // gameStart event will handle setting up player colors and turn
+                        } else {
+                            logger.error(`Error joining room: ${response.message}`);
+                            logger.error('Error joining room:', response.message);
+                            throw Error('Error joining room');
+                        }
+                    });
+                }
+            }
+            return true;
+        } catch (err) {
+            return false
+        }
+    }
+
+    public async  matchMakingRealTime(socket: Socket, username: string, preferences: any, userDetails: any, allowExtendedSearch: boolean) : Promise<Boolean> {
+        try {
+            const res = await this.realtimeMatchmakingService.findMatch(userDetails, allowExtendedSearch);
+            logger.info(`User ${socket.id} (${username}) added to matchmaking queue.`);
+            await this.createAndJoinRoom(socket, 'res.player1Details.user_id', 'res.player2Details.user_id');
+            //TODO: push event to queue to update db
+            return true;
+        } catch(err) {
+            logger.error(`Error adding user with ${socket.id} and username ${username} to matchmaking queue: ${err}`);
+            return false;
+        }
     }
 }
 

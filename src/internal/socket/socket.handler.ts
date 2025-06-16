@@ -1,5 +1,7 @@
 import { Server, Socket } from 'socket.io';
 import logger from '../../utils/logger';
+import GameService from '../service/game.service';
+import { log } from 'console';
 
 // Simple in-memory store for rooms and player assignments.
 //TODO: For production, consider a more robust solution like Redis.
@@ -10,6 +12,9 @@ interface Room {
   currentPlayerTurn?: string; // socketId of the player whose turn it is
 }
 const rooms = new Map<string, Room>();
+
+const matchmakingQueue: { socketId: string; username: string; preferences?: any }[] = [];
+
 
 export default function initializeSocketIO(io: Server) {
   io.on('connection', (socket: Socket) => {
@@ -60,6 +65,24 @@ export default function initializeSocketIO(io: Server) {
       }
     });
 
+    socket.on('findMatch', async ({ username, preferences, userDetails, allowExtendedSearch }, callback) => {
+      try{
+        logger.info(`User ${socket.id} (${username}) looking for a match with preferences:`, preferences);
+        if(!username || !preferences){
+          logger.info('Username or Preference is missing');
+          return callback({ status: 'error', message: 'Username or Preference is missing' })
+        }
+        const result : Boolean = await new GameService().matchMakingRealTime(socket, username, preferences, userDetails, allowExtendedSearch)
+        if(result)
+          return callback({ status: 'success', message: 'Added to queue, searching for opponent...' });
+        else 
+          return callback({ status: 'error', message: `Something went wrong in pushing ${username} to matchmaking queue` });
+      } catch(err) {
+        logger.error(`Error in finding match for ${username}: ${err}`);
+        return callback({ status: 'error', message: `Something went wrong in finding match for ${username}`})
+      }
+    });
+
     socket.on('makeMove', ({ roomId, move }) => {
       const room = rooms.get(roomId);
       if (room && room.players.find(p => p.socketId === socket.id) && socket.id === room.currentPlayerTurn) {
@@ -73,6 +96,8 @@ export default function initializeSocketIO(io: Server) {
 
         // Broadcast the move to the other player in the room
         socket.to(roomId).emit('opponentMove', { move, nextPlayerTurn: room.currentPlayerTurn });
+
+        //TODO: push the move to reflect in the db
       } else {
         logger.warn(`Invalid move attempt in room ${roomId} from ${socket.id}`);
         // Optionally, send an error back to the sender

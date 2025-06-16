@@ -74,3 +74,85 @@
 {"level":"info","message":"MongoDB connected successfully."}
 {"level":"info","message":"MongoDB connected successfully."}
 {"level":"info","message":"MongoDB connected successfully."}
+{"level":"info","message":"MongoDB connected successfully."}
+{"level":"info","message":"Server running at http://localhost:3000"}
+{"level":"info","message":"User connected: IHeIlaLw52YgNXBtAAAC"}
+{"level":"info","message":"Room created: room-1tuqcq0 by IHeIlaLw52YgNXBtAAAC (1)"}
+{"level":"info","message":"User connected: yyazLIVnvmBEFFTeAAAF"}
+{"level":"info","message":"User yyazLIVnvmBEFFTeAAAF (af) joined room: room-1tuqcq0"}
+{"level":"info","message":"Game started in room: room-1tuqcq0"}
+{"level":"info","message":"Move received in room room-1tuqcq0 from IHeIlaLw52YgNXBtAAAC: {\"from\":\"d2\",\"to\":\"d4\"}"}
+{"level":"info","message":"Move received in room room-1tuqcq0 from yyazLIVnvmBEFFTeAAAF: {\"from\":\"d7\",\"to\":\"d5\"}"}
+{"level":"info","message":"Move received in room room-1tuqcq0 from IHeIlaLw52YgNXBtAAAC: {\"from\":\"e2\",\"to\":\"e3\"}"}
+{"level":"info","message":"Move received in room room-1tuqcq0 from yyazLIVnvmBEFFTeAAAF: {\"from\":\"e7\",\"to\":\"e6\"}"}
+{"level":"info","message":"Move received in room room-1tuqcq0 from IHeIlaLw52YgNXBtAAAC: {\"from\":\"g1\",\"to\":\"f3\"}"}
+{"level":"info","message":"Move received in room room-1tuqcq0 from yyazLIVnvmBEFFTeAAAF: {\"from\":\"g8\",\"to\":\"f6\"}"}
+{"level":"info","message":"Move received in room room-1tuqcq0 from IHeIlaLw52YgNXBtAAAC: {\"from\":\"c2\",\"to\":\"c3\"}"}
+{"level":"info","message":"Move received in room room-1tuqcq0 from yyazLIVnvmBEFFTeAAAF: {\"from\":\"b8\",\"to\":\"c6\"}"}
+{"level":"info","message":"Move received in room room-1tuqcq0 from IHeIlaLw52YgNXBtAAAC: {\"from\":\"f1\",\"to\":\"b5\"}"}
+{"level":"info","message":"Move received in room room-1tuqcq0 from yyazLIVnvmBEFFTeAAAF: {\"from\":\"c8\",\"to\":\"d7\"}"}
+{"level":"info","message":"Move received in room room-1tuqcq0 from IHeIlaLw52YgNXBtAAAC: {\"from\":\"e1\",\"to\":\"g1\"}"}
+{"level":"info","message":"Move received in room room-1tuqcq0 from yyazLIVnvmBEFFTeAAAF: {\"from\":\"g7\",\"to\":\"g6\"}"}
+{"level":"info","message":"Move received in room room-1tuqcq0 from IHeIlaLw52YgNXBtAAAC: {\"from\":\"b1\",\"to\":\"d2\"}"}
+{"level":"info","message":"Move received in room room-1tuqcq0 from yyazLIVnvmBEFFTeAAAF: {\"from\":\"f8\",\"to\":\"g7\"}"}
+{"level":"info","message":"Move received in room room-1tuqcq0 from IHeIlaLw52YgNXBtAAAC: {\"from\":\"f3\",\"to\":\"g5\"}"}
+{"level":"info","message":"Move received in room room-1tuqcq0 from yyazLIVnvmBEFFTeAAAF: {\"from\":\"e8\",\"to\":\"g8\"}"}
+{"level":"info","message":"Move received in room room-1tuqcq0 from IHeIlaLw52YgNXBtAAAC: {\"from\":\"f2\",\"to\":\"f3\"}"}
+{"level":"info","message":"Move received in room room-1tuqcq0 from yyazLIVnvmBEFFTeAAAF: {\"from\":\"e6\",\"to\":\"e5\"}"}
+{"level":"info","message":"Move received in room room-1tuqcq0 from IHeIlaLw52YgNXBtAAAC: {\"from\":\"d4\",\"to\":\"e5\"}"}
+{"level":"info","message":"Move received in room room-1tuqcq0 from yyazLIVnvmBEFFTeAAAF: {\"from\":\"c6\",\"to\":\"e5\"}"}
+{"level":"info","message":"Move received in room room-1tuqcq0 from IHeIlaLw52YgNXBtAAAC: {\"from\":\"b5\",\"to\":\"d7\"}"}
+{"level":"info","message":"Move received in room room-1tuqcq0 from yyazLIVnvmBEFFTeAAAF: {\"from\":\"e5\",\"to\":\"d7\"}"}
+{"level":"info","message":"User disconnected: IHeIlaLw52YgNXBtAAAC"}
+{"level":"info","message":"User IHeIlaLw52YgNXBtAAAC removed from room room-1tuqcq0"}
+{"level":"info","message":"Room room-1tuqcq0 now has less than 2 players. Game might be over."}
+{"level":"info","message":"User connected: e-9ouBcblBVcrSi6AAAI"}
+{"level":"info","message":"MongoDB connected successfully."}
+{"level":"info","message":"Server running at http://localhost:3000"}
+{"level":"info","message":"User connected: cshRbJmpCGH8OK_VAAAB"}
+{"level":"info","message":"User connected: HtiSkNMGKbXw-jocAAAD"}
+{"level":"info","message":"Room created: room-emp2cuy by cshRbJmpCGH8OK_VAAAB (2)"}
+{"level":"info","message":"User HtiSkNMGKbXw-jocAAAD (af) joined room: room-emp2cuy"}
+{"level":"info","message":"Game started in room: room-emp2cuy"}
+{"level":"info","message":"Move received in room room-emp2cuy from cshRbJmpCGH8OK_VAAAB: {\"from\":\"d2\",\"to\":\"d4\"}"}
+{"level":"info","message":"User disconnected: HtiSkNMGKbXw-jocAAAD"}
+{"level":"info","message":"User HtiSkNMGKbXw-jocAAAD removed from room room-emp2cuy"}
+{"level":"info","message":"Room room-emp2cuy now has less than 2 players. Game might be over."}
+{"level":"info","message":"User connected: YcCqBJmCGWGr_nosAAAG"}
+{"level":"info","message":"User YcCqBJmCGWGr_nosAAAG (asd) joined room: room-emp2cuy"}
+{"level":"info","message":"Game started in room: room-emp2cuy"}
+{"level":"info","message":"User disconnected: cshRbJmpCGH8OK_VAAAB"}
+{"level":"info","message":"User cshRbJmpCGH8OK_VAAAB removed from room room-emp2cuy"}
+{"level":"info","message":"Room room-emp2cuy now has less than 2 players. Game might be over."}
+{"level":"info","message":"User connected: B7z73wU8-zO00ZXwAAAJ"}
+{"level":"info","message":"User disconnected: YcCqBJmCGWGr_nosAAAG"}
+{"level":"info","message":"User YcCqBJmCGWGr_nosAAAG removed from room room-emp2cuy"}
+{"level":"info","message":"Room room-emp2cuy now has less than 2 players. Game might be over."}
+{"level":"info","message":"User connected: 0OWl_83MqEKm9XNFAAAM"}
+{"level":"info","message":"Room created: room-pnblkb4 by B7z73wU8-zO00ZXwAAAJ (123)"}
+{"level":"info","message":"User 0OWl_83MqEKm9XNFAAAM (as) joined room: room-pnblkb4"}
+{"level":"info","message":"Game started in room: room-pnblkb4"}
+{"level":"info","message":"Move received in room room-pnblkb4 from B7z73wU8-zO00ZXwAAAJ: {\"from\":\"d2\",\"to\":\"d4\"}"}
+{"level":"info","message":"Move received in room room-pnblkb4 from 0OWl_83MqEKm9XNFAAAM: {\"from\":\"d7\",\"to\":\"d5\"}"}
+{"level":"info","message":"Move received in room room-pnblkb4 from B7z73wU8-zO00ZXwAAAJ: {\"from\":\"e2\",\"to\":\"e3\"}"}
+{"level":"info","message":"Move received in room room-pnblkb4 from 0OWl_83MqEKm9XNFAAAM: {\"from\":\"e7\",\"to\":\"e6\"}"}
+{"level":"info","message":"Move received in room room-pnblkb4 from B7z73wU8-zO00ZXwAAAJ: {\"from\":\"g1\",\"to\":\"f3\"}"}
+{"level":"info","message":"User disconnected: 0OWl_83MqEKm9XNFAAAM"}
+{"level":"info","message":"User 0OWl_83MqEKm9XNFAAAM removed from room room-pnblkb4"}
+{"level":"info","message":"Room room-pnblkb4 now has less than 2 players. Game might be over."}
+{"level":"info","message":"User disconnected: B7z73wU8-zO00ZXwAAAJ"}
+{"level":"info","message":"User B7z73wU8-zO00ZXwAAAJ removed from room room-pnblkb4"}
+{"level":"info","message":"Room room-pnblkb4 now has less than 2 players. Game might be over."}
+{"level":"info","message":"User connected: 7b5wyECMfrZMT2g0AAAP"}
+{"level":"info","message":"User disconnected: 7b5wyECMfrZMT2g0AAAP"}
+{"level":"info","message":"User connected: 1NU--6DU_y94uVTyAAAS"}
+{"level":"info","message":"User disconnected: 1NU--6DU_y94uVTyAAAS"}
+{"level":"info","message":"User connected: vEld8kfBG-U2Tb_BAAAV"}
+{"level":"info","message":"User disconnected: vEld8kfBG-U2Tb_BAAAV"}
+{"level":"info","message":"User connected: JelPN_VuG20_oj5XAAAY"}
+{"level":"info","message":"MongoDB connected successfully."}
+{"level":"info","message":"Server running at http://localhost:3000"}
+{"level":"info","message":"User connected: Q8Cf1CGbCH4S-8oTAAAB"}
+{"level":"info","message":"MongoDB connected successfully."}
+{"level":"info","message":"Server running at http://localhost:3000"}
+{"level":"info","message":"User connected: LqbkkN0nI1SUS7QuAAAB"}
