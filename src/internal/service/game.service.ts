@@ -1,7 +1,9 @@
+import { io } from "../..";
 import logger from "../../utils/logger";
-import { addUserToMatchmakingQueue } from "../../utils/redis.client";
-import RealtimeMatchmaking from "../../worker/matchmaking/realtime.matchmaking.worker";
+import redisClient, { addUserToMatchmakingQueue } from "../../utils/redis.client";
+import RealtimeMatchmaking, { UserDetailsRedisObj } from "../../worker/matchmaking/realtime.matchmaking.worker";
 import { Server, Socket } from "socket.io";
+import { Room, rooms } from "../socket/socket.handler";
 
 type GameOutcome = 'W' | 'L' | 'D'; // Win, Loss, Draw
 
@@ -50,19 +52,16 @@ class GameService {
         return similarity;
     }
 
-    private assignColorToUser(user: Player, opponent: Player): 'white' | 'black' {
+    private assignColorToUser(): { p1Color: 'white' | 'black', p2Color: 'white' | 'black' }  {
         // Rule 5: "Choose color of the user by simply by looking if opponent if greater number of color played
         // as compared to the user then user should get the color (i.e black/white)"
         // This means if the opponent has played more of a certain color than the user, the user gets that color.
 
-        if (opponent.stats.gamesAsWhite > user.stats.gamesAsWhite) {
-            return 'white'; // User (player1) gets White
-        } else if (opponent.stats.gamesAsBlack > user.stats.gamesAsBlack) {
-            return 'black'; // User (player1) gets Black
-        }
-        // Default: if none of the above, or if user has played more of both.
-        // A common default is white for the player initiating, or random.
-        return 'white'; // User (player1) defaults to White
+        const p1Color = Math.random() < 0.5 ? 'white' : 'black';
+        return {
+            p1Color: p1Color,
+            p2Color: p1Color === 'white' ? 'black' : 'white'
+        };
     }
 
 
@@ -127,86 +126,81 @@ class GameService {
         }
 
         if (bestMatchFound) {
-            const player1Color = this.assignColorToUser(currentUser, bestMatchFound);
+            const player1Color = this.assignColorToUser();
             return {
                 player1: currentUser,
                 player2: bestMatchFound,
-                player1Color: player1Color,
+                player1Color: player1Color.p1Color,
             };
         }
 
         return null; // No suitable match found after all iterations
     }
 
-    // public handleJoinRoom = () => {
-    //     if (socket && roomToJoin && username) {
-    //         socket.emit('joinRoom', { roomId: roomToJoin, username }, (response: { status: string; message?: string; room?: any }) => {
-    //             if (response.status === 'success' && response.room) {
-    //                 setGameMessage(`Joined room: ${response.room.id}.`);
-    //                 console.log('Joined room:', response.room);
-    //                 // gameStart event will handle setting up player colors and turn
-    //             } else {
-    //                 setGameMessage(`Error joining room: ${response.message}`);
-    //                 console.error('Error joining room:', response.message);
-    //             }
-    //         });
-    //     }
-    // };
-
-    // const handleCreateRoom = () => {
-    //     if (socket && username) {
-    //         socket.emit('createRoom', { username }, (response: { roomId?: string; error?: string }) => {
-    //             if (response.roomId) {
-    //                 setRoomId(response.roomId);
-    //                 setGameMessage(`Room created: ${response.roomId}. Waiting for opponent...`);
-    //                 console.log('Room created:', response.roomId);
-    //             } else {
-    //                 setGameMessage(`Error creating room: ${response.error}`);
-    //                 console.error('Error creating room:', response.error);
-    //             }
-    //         });
-    //     }
-    // };
-
-    public async  createAndJoinRoom(socket: Socket, player_one_id: String, player_two_id: String) : Promise<Boolean> {
+    public async  createAndJoinRoom(socket: Socket, player1Details: UserDetailsRedisObj, player2Details: UserDetailsRedisObj) : Promise<Boolean> {
         try { 
+            logger.info(`Received request to create and join room for players ${player1Details.user_id} and ${player2Details.user_id})}`)
+            const player1Socket = io.sockets.sockets.get(player1Details.socket_id);
+            const player2Socket = io.sockets.sockets.get(player2Details.socket_id);
 
-            if (socket && player_one_id && player_two_id) {
-                let roomId : String | null = null;
-                await socket.emit('createRoom', { player_one_id }, (response: { roomId?: string; error?: string }) => {
-                    if (response.roomId) {
-                        roomId = response.roomId;
-                    } else {
-                        console.error('Error creating room:', response.error);
-                        throw Error('Error creating room');
-                    }
-                });
-                
-                if(roomId) {
-                    await socket.emit('joinRoom', { roomId, player_two_id }, (response: { status: string; message?: string; room?: any }) => {
-                        if (response.status === 'success' && response.room) {
-                            logger.info(`Joined room: ${response.room.id}.`);
-                            logger.info('Joined room:', response.room);
-                            // gameStart event will handle setting up player colors and turn
-                        } else {
-                            logger.error(`Error joining room: ${response.message}`);
-                            logger.error('Error joining room:', response.message);
-                            throw Error('Error joining room');
-                        }
-                    });
+            if (!player1Socket || !player1Socket.connected) {
+                logger.error(`Player 1 (${player1Details.socket_id}) disconnected after match. Informing player 2 if connected.`);
+                if (player2Socket && player2Socket.connected) {
+                    player2Socket.emit('matchmakingUpdate', { message: 'Opponent disconnected before game start. Please try again.' });
                 }
+                return true; // Processed, but game not started
             }
+            
+            if (!player2Socket || !player2Socket.connected) {
+                logger.error(`Player 2 (${player2Details.socket_id}) disconnected after match. Informing player 1.`);
+                player1Socket.emit('matchmakingUpdate', { message: 'Opponent disconnected before game start. Please try again.' });
+                return true; // Processed, but game not started
+            }
+
+            const roomId = `game-${Math.random().toString(36).substring(2, 11)}`;
+            
+            // Make both sockets join the room
+            player1Socket.join(roomId);
+            player2Socket.join(roomId);
+            logger.info(`Player ${player1Socket.id} and ${player2Socket.id} joined room ${roomId}`);
+            const { p1Color, p2Color } = this.assignColorToUser();
+
+            const gamePlayers = [
+                { id: player1Socket.id, username: player1Details.username || 'Player1', color: p1Color },
+                { id: player2Socket.id, username: player2Details.username || 'Player2', color: p2Color }
+            ];
+            
+            const currentPlayerTurn = p1Color === 'white' ? player1Socket.id : player2Socket.id;
+
+            const newRoom: Room = {
+                id: roomId,
+                players: gamePlayers.map(p => ({ socketId: p.id, username: p.username, color: p.color as 'white' | 'black' })),
+                currentPlayerTurn,
+            }
+
+            rooms.set(roomId, newRoom);
+            logger.info(`Room metadata stored for room ${roomId}`);
+
+            // Emit gameStart to everyone in the room
+            io.to(roomId).emit('gameStart', {
+                roomId,
+                players: gamePlayers,
+                currentPlayerTurn,
+            });
+            logger.info(`Game ${roomId} started for ${gamePlayers[0].username} and ${gamePlayers[1].username}`);
             return true;
         } catch (err) {
+            logger.error(`Error in creating and joining room for players ${player1Details.user_id} and ${player2Details.user_id}: ${err}`);
             return false
         }
     }
 
     public async  matchMakingRealTime(socket: Socket, username: string, preferences: any, userDetails: any, allowExtendedSearch: boolean) : Promise<Boolean> {
         try {
-            const res = await this.realtimeMatchmakingService.findMatch(userDetails, allowExtendedSearch);
-            logger.info(`User ${socket.id} (${username}) added to matchmaking queue.`);
-            await this.createAndJoinRoom(socket, 'res.player1Details.user_id', 'res.player2Details.user_id');
+            const res : { player1Details: UserDetailsRedisObj, player2Details: UserDetailsRedisObj } | null = await this.realtimeMatchmakingService.findMatch(userDetails, allowExtendedSearch);
+            logger.info(`User ${socket.id} (${username}) added to matchmaking queue, response received ${JSON.stringify(res)}`);
+            if(res)
+                await this.createAndJoinRoom(socket, res.player1Details, res.player2Details);
             //TODO: push event to queue to update db
             return true;
         } catch(err) {

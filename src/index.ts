@@ -12,7 +12,7 @@ const app = express();
 const port = process.env.PORT || 3000;
 
 let httpServer: http.Server = http.createServer(app);
-const io = new SocketIOServer(httpServer, { // Initialize Socket.IO server
+export const io = new SocketIOServer(httpServer, { // Initialize Socket.IO server
   cors: {
     origin: "*", // Configure CORS for Socket.IO, adjust as needed for your UI's origin
     methods: ["GET", "POST"]
@@ -39,12 +39,11 @@ app.use(router);
 const startServer = async () => {
   try {
     console.log(`Server running at http://localhost:${port}`);
-
     await connectDB(); // Connect to MongoDB
     initializeSocketIO(io); // Initialize Socket.IO with the server instance
 
     await redisClient.connect(); // Connect to Redis
-
+    // await initializeGlobalSocketServer();
     httpServer.listen(port, () => {
       // Use logger here instead of console.log for consistency, or keep console.log if preferred for startup
       logger.info(`Server running at http://localhost:${port}`);

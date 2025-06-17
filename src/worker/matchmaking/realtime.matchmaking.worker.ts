@@ -3,9 +3,10 @@ import path from 'path'; // For robust path resolution
 import redisClient, { MATCHMAKING_QUEUE_KEY } from "../../utils/redis.client"; // Import constant
 import logger from "../../utils/logger"; // For logging
 
-interface UserDetailsRedisObj {
+export interface UserDetailsRedisObj {
     user_id: string; // Use lowercase primitive types
     rating: number;
+    socket_id: string;
     win_percentage: number;
     black_win_percentage: number;
     white_win_percentage: number;
@@ -50,7 +51,7 @@ class RealtimeMatchmaking {
                 "50",                          // ARGV[3] - example tolerance, make configurable
                 allowExtendedSearch ? 'true' : 'false' // ARGV[4]
             );
-
+            console.log('Result from Lua: '+result);
             if (result) {
                 logger.info(`Match found via Lua for user ${userDetails.user_id}!`);
                 const [player1Details, player2Details] = result;

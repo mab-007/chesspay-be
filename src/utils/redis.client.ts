@@ -5,9 +5,11 @@ import { redisConfig } from '../config/env.config';
 const redisClient = new Redis({
   host: redisConfig.host,
   port: redisConfig.port,
+  username: redisConfig.username, // Add this line
   password: redisConfig.password,
   maxRetriesPerRequest: null, // Important for robust connection handling
   enableReadyCheck: true,
+  lazyConnect: true, // Add this line to prevent auto-connecting
 });
 
 redisClient.on('connect', () => {

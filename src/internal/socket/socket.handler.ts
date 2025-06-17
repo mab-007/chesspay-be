@@ -5,13 +5,13 @@ import { log } from 'console';
 
 // Simple in-memory store for rooms and player assignments.
 //TODO: For production, consider a more robust solution like Redis.
-interface Room {
+export interface Room {
   id: string;
   players: { socketId: string; username?: string; color?: 'white' | 'black' }[];
   boardState?: any; // Placeholder for your chess game state
   currentPlayerTurn?: string; // socketId of the player whose turn it is
 }
-const rooms = new Map<string, Room>();
+export const rooms = new Map<string, Room>();
 
 const matchmakingQueue: { socketId: string; username: string; preferences?: any }[] = [];
 
@@ -67,6 +67,7 @@ export default function initializeSocketIO(io: Server) {
 
     socket.on('findMatch', async ({ username, preferences, userDetails, allowExtendedSearch }, callback) => {
       try{
+        console.log({ username, preferences, userDetails, allowExtendedSearch });
         logger.info(`User ${socket.id} (${username}) looking for a match with preferences:`, preferences);
         if(!username || !preferences){
           logger.info('Username or Preference is missing');
@@ -84,7 +85,12 @@ export default function initializeSocketIO(io: Server) {
     });
 
     socket.on('makeMove', ({ roomId, move }) => {
+      console.log('HITTING MAKE MOVE'+roomId);
+      
       const room = rooms.get(roomId);
+
+      console.log('ROOM'+JSON.stringify(room));
+      
       if (room && room.players.find(p => p.socketId === socket.id) && socket.id === room.currentPlayerTurn) {
         // Basic validation: is it the player's turn?
         // In a real game, you'd validate the move against chess rules and update boardState
