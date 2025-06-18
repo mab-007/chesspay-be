@@ -6,7 +6,7 @@ const router = Router();
 const pingRouter = new PingRouter();
 const paymentRouter = new PaymentRoute();
 
-router.use('/', pingRouter.router);
+router.use('/api', pingRouter.router);
 router.use('/payment', paymentRouter.router);
 
 

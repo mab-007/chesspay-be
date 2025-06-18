@@ -635,3 +635,178 @@
 {"level":"info","message":"Move received in room game-tqf7dep3k from ciHBCNFt6kX-ZosfAAAB: {\"from\":\"e8\",\"to\":\"g8\"}"}
 {"level":"info","message":"Move received in room game-tqf7dep3k from xU9YuaqFiYMJnKGlAAAD: {\"from\":\"c1\",\"to\":\"a3\"}"}
 {"level":"info","message":"Move received in room game-tqf7dep3k from ciHBCNFt6kX-ZosfAAAB: {\"from\":\"f8\",\"to\":\"e8\"}"}
+{"level":"info","message":"MongoDB connected successfully."}
+{"level":"info","message":"Connected to Redis successfully."}
+{"level":"info","message":"Server running at http://localhost:3000"}
+{"level":"info","message":"MongoDB connected successfully."}
+{"level":"info","message":"Connected to Redis successfully."}
+{"level":"info","message":"Server running at http://localhost:3000"}
+{"level":"info","message":"MongoDB connected successfully."}
+{"level":"info","message":"Connected to Redis successfully."}
+{"level":"info","message":"Server running at http://localhost:3000"}
+{"level":"info","message":"MongoDB connected successfully."}
+{"level":"info","message":"MongoDB connected successfully."}
+{"level":"info","message":"Connected to Redis successfully."}
+{"level":"info","message":"Server running at http://localhost:3000"}
+{"level":"info","message":"MongoDB connected successfully."}
+{"level":"info","message":"Connected to Redis successfully."}
+{"level":"info","message":"Server running at http://localhost:3000"}
+{"level":"info","message":"MongoDB connected successfully."}
+{"level":"info","message":"Connected to Redis successfully."}
+{"level":"info","message":"Server running at http://localhost:3000"}
+{"level":"info","message":"MongoDB connected successfully."}
+{"level":"info","message":"Connected to Redis successfully."}
+{"level":"info","message":"MongoDB connected successfully."}
+{"level":"info","message":"Connected to Redis successfully."}
+{"level":"info","message":"Server running at http://localhost:3000"}
+{"level":"info","message":"MongoDB connected successfully."}
+{"level":"info","message":"Connected to Redis successfully."}
+{"level":"info","message":"Server running at http://localhost:3000"}
+{"level":"info","message":"MongoDB connected successfully."}
+{"level":"info","message":"Connected to Redis successfully."}
+{"level":"info","message":"Server running at http://localhost:3000"}
+{"level":"info","message":"Ping request received"}
+{"level":"info","message":"MongoDB connected successfully."}
+{"level":"info","message":"Connected to Redis successfully."}
+{"level":"info","message":"Server running at http://localhost:3000"}
+{"level":"info","message":"MongoDB connected successfully."}
+{"level":"info","message":"Connected to Redis successfully."}
+{"level":"info","message":"Server running at http://localhost:3000"}
+{"level":"info","message":"MongoDB connected successfully."}
+{"level":"info","message":"Connected to Redis successfully."}
+{"level":"info","message":"Server running at http://localhost:3000"}
+{"level":"info","message":"MongoDB connected successfully."}
+{"level":"info","message":"Connected to Redis successfully."}
+{"level":"info","message":"Server running at http://localhost:3000"}
+{"level":"info","message":"MongoDB connected successfully."}
+{"level":"info","message":"Connected to Redis successfully."}
+{"level":"info","message":"Server running at http://localhost:3000"}
+{"level":"info","message":"Creating order at juspay for amount 10000 and currency INR"}
+{"level":"info","message":"Creating order at juspay for amount 10000 and currency INR"}
+{"level":"info","message":"MongoDB connected successfully."}
+{"level":"info","message":"Connected to Redis successfully."}
+{"level":"info","message":"Server running at http://localhost:3000"}
+{"level":"info","message":"MongoDB connected successfully."}
+{"level":"info","message":"Connected to Redis successfully."}
+{"level":"info","message":"Server running at http://localhost:3000"}
+{"level":"info","message":"Creating order at juspay for amount 10000 and currency INR"}
+{"level":"info","message":"Creating order at juspay for amount 10000 and currency INR"}
+{"level":"info","message":"Creating order at juspay for amount 100 and currency INR"}
+{"level":"info","message":"Creating order at juspay for amount 100 and currency INR"}
+{"level":"info","message":"User connected: FTb7LyZZRvJa5mGQAAAC"}
+{"level":"info","message":"User disconnected: FTb7LyZZRvJa5mGQAAAC"}
+{"level":"info","message":"User connected: 6WuivlHRO-wAv7JsAAAF"}
+{"level":"info","message":"User disconnected: 6WuivlHRO-wAv7JsAAAF"}
+{"level":"info","message":"MongoDB connected successfully."}
+{"level":"info","message":"Connected to Redis successfully."}
+{"level":"info","message":"Server running at http://localhost:3000"}
+{"level":"info","message":"Creating order at juspay for amount 100000 and currency INR"}
+{"level":"info","message":"Creating order at juspay for amount 100000 and currency INR"}
+{"level":"info","message":"Creating order at juspay for amount 100000 and currency INR"}
+{"level":"info","message":"Creating order at juspay for amount 100000 and currency INR"}
+{"level":"info","message":"Creating order at juspay for amount 100000 and currency INR"}
+{"level":"info","message":"Creating order at juspay for amount 100000 and currency INR"}
+{"level":"info","message":"Creating order at juspay for amount 100 and currency INR"}
+{"level":"info","message":"MongoDB connected successfully."}
+{"level":"info","message":"Connected to Redis successfully."}
+{"level":"info","message":"Server running at http://localhost:3000"}
+{"level":"info","message":"Creating order at juspay for amount 100 and currency INR"}
+{"level":"info","message":"Creating order at juspay for amount 100 and currency INR"}
+{"level":"info","message":"MongoDB connected successfully."}
+{"level":"info","message":"Connected to Redis successfully."}
+{"level":"info","message":"Server running at http://localhost:3000"}
+{"level":"info","message":"MongoDB connected successfully."}
+{"level":"info","message":"Connected to Redis successfully."}
+{"level":"info","message":"Server running at http://localhost:3000"}
+{"level":"info","message":"MongoDB connected successfully."}
+{"level":"info","message":"Connected to Redis successfully."}
+{"level":"info","message":"Server running at http://localhost:3000"}
+{"level":"info","message":"Creating order at juspay for amount 100 and currency INR"}
+{"level":"info","message":"Creating order at juspay for amount 1 and currency INR"}
+{"level":"info","message":"Verifying payment at juspay for orderId order_QidQ8VxZp0Xvx9 and paymentId pay_QidQB9E9Z8iGgY"}
+{"level":"info","message":"Payment verification successful"}
+{"code":"ECONNRESET","errno":-54,"level":"error","message":"Redis connection error: read ECONNRESET","stack":"Error: read ECONNRESET\n    at TCP.onStreamRead (node:internal/stream_base_commons:216:20)","syscall":"read"}
+{"level":"info","message":"Connected to Redis successfully."}
+{"level":"info","message":"Creating order at juspay for amount 1 and currency INR"}
+{"level":"info","message":"Verifying payment at juspay for orderId order_Qidq98E1seVfhp and paymentId pay_QidqFAXe9j8zg5"}
+{"level":"info","message":"Payment verification successful"}
+{"level":"info","message":"User connected: kloHr1sOZ08r9r5JAAAC"}
+{"level":"info","message":"User disconnected: kloHr1sOZ08r9r5JAAAC"}
+{"level":"info","message":"Creating order at juspay for amount 1 and currency INR"}
+{"level":"info","message":"User connected: cW93ptl-MAdUffKBAAAF"}
+{"level":"info","message":"User disconnected: cW93ptl-MAdUffKBAAAF"}
+{"level":"info","message":"Creating order at juspay for amount 1 and currency INR"}
+{"level":"info","message":"Creating order at juspay for amount 1 and currency INR"}
+{"level":"info","message":"Creating order at juspay for amount 20 and currency INR"}
+{"level":"info","message":"Verifying payment at juspay for orderId order_Qii3KYbHg9ciwa and paymentId pay_Qii3cLOQ86iHnG"}
+{"level":"info","message":"Payment verification successful"}
+{"level":"info","message":"User connected: wzv2DMcCFB7KP3i9AAAI"}
+{"level":"info","message":"User disconnected: wzv2DMcCFB7KP3i9AAAI"}
+{"level":"info","message":"User connected: VfM6HcZPR1cu8EptAAAL"}
+{"level":"info","message":"User disconnected: VfM6HcZPR1cu8EptAAAL"}
+{"level":"info","message":"User connected: layUGKekXl8Vs_O0AAAO"}
+{"level":"info","message":"User disconnected: layUGKekXl8Vs_O0AAAO"}
+{"level":"info","message":"User connected: RigYm2hujv4e8zllAAAR"}
+{"level":"info","message":"User disconnected: RigYm2hujv4e8zllAAAR"}
+{"level":"info","message":"User connected: awg077xExbAiJgmBAAAU"}
+{"level":"info","message":"User disconnected: awg077xExbAiJgmBAAAU"}
+{"level":"info","message":"User connected: HPvds4OzFLJi34LVAAAX"}
+{"level":"info","message":"User disconnected: HPvds4OzFLJi34LVAAAX"}
+{"level":"info","message":"Creating order at juspay for amount 20 and currency INR"}
+{"level":"info","message":"User connected: bCVuJj3wXhnTbN6iAAAa"}
+{"level":"info","message":"User disconnected: bCVuJj3wXhnTbN6iAAAa"}
+{"level":"info","message":"User connected: ChjP3g6er0CbyfWYAAAd"}
+{"level":"info","message":"User disconnected: ChjP3g6er0CbyfWYAAAd"}
+{"level":"info","message":"User connected: AfY9SDpu-Z7xX8QXAAAg"}
+{"level":"info","message":"User disconnected: AfY9SDpu-Z7xX8QXAAAg"}
+{"level":"info","message":"User connected: G6g2xpyRZprP-I1lAAAj"}
+{"code":"ETIMEDOUT","errno":-60,"level":"error","message":"Redis connection error: read ETIMEDOUT","stack":"Error: read ETIMEDOUT\n    at TCP.onStreamRead (node:internal/stream_base_commons:216:20)","syscall":"read"}
+{"level":"info","message":"Connected to Redis successfully."}
+{"level":"info","message":"User disconnected: G6g2xpyRZprP-I1lAAAj"}
+{"level":"info","message":"User connected: GRy-WqwluGYk_3_CAAAm"}
+{"level":"info","message":"User disconnected: GRy-WqwluGYk_3_CAAAm"}
+{"level":"info","message":"User connected: 9agNcmocnB4XOrMuAAAp"}
+{"level":"info","message":"User disconnected: 9agNcmocnB4XOrMuAAAp"}
+{"level":"info","message":"User connected: dGXki0mbWzQcZHsCAAAs"}
+{"level":"info","message":"User disconnected: dGXki0mbWzQcZHsCAAAs"}
+{"level":"info","message":"User connected: EKZgzzYFhp41B1BHAAAv"}
+{"level":"info","message":"User disconnected: EKZgzzYFhp41B1BHAAAv"}
+{"level":"info","message":"User connected: TQ66fgSp0w8R5UuXAAAy"}
+{"level":"info","message":"User disconnected: TQ66fgSp0w8R5UuXAAAy"}
+{"level":"info","message":"User connected: wX5HwMUJahQ3PDrNAAA0"}
+{"level":"info","message":"User disconnected: wX5HwMUJahQ3PDrNAAA0"}
+{"level":"info","message":"User connected: hwTOvlfDEDW8DrrxAAA2"}
+{"level":"info","message":"User disconnected: hwTOvlfDEDW8DrrxAAA2"}
+{"level":"info","message":"User connected: uvFU-zwhpRpm5F-rAAA5"}
+{"level":"info","message":"User disconnected: uvFU-zwhpRpm5F-rAAA5"}
+{"level":"info","message":"User connected: PtimDJRPCK8SL4AlAAA8"}
+{"level":"info","message":"User disconnected: PtimDJRPCK8SL4AlAAA8"}
+{"level":"info","message":"User connected: BIGxct-0qaA57vOhAAA-"}
+{"level":"info","message":"User disconnected: BIGxct-0qaA57vOhAAA-"}
+{"level":"info","message":"User connected: hrGcXaDiQOlmmxq3AABA"}
+{"level":"info","message":"User disconnected: hrGcXaDiQOlmmxq3AABA"}
+{"level":"info","message":"User connected: qF53rJLJ-HtqhpvlAABC"}
+{"level":"info","message":"User disconnected: qF53rJLJ-HtqhpvlAABC"}
+{"level":"info","message":"User connected: 6dEX_evEAntJJuXpAABE"}
+{"level":"info","message":"User disconnected: 6dEX_evEAntJJuXpAABE"}
+{"level":"info","message":"User connected: zCRBh9HXabLEkcFwAABG"}
+{"level":"info","message":"User disconnected: zCRBh9HXabLEkcFwAABG"}
+{"level":"info","message":"User connected: FyK5yIekLbiRn3bbAABJ"}
+{"level":"info","message":"User disconnected: FyK5yIekLbiRn3bbAABJ"}
+{"level":"info","message":"User connected: _idG3obipu31rXEAAABM"}
+{"level":"info","message":"User disconnected: _idG3obipu31rXEAAABM"}
+{"level":"info","message":"User connected: TSB6ACx4sEVU6jtgAABP"}
+{"level":"info","message":"User disconnected: TSB6ACx4sEVU6jtgAABP"}
+{"level":"info","message":"User connected: UexBmxTRHpdJ7SocAABS"}
+{"level":"info","message":"User disconnected: UexBmxTRHpdJ7SocAABS"}
+{"level":"info","message":"User connected: gLeSQbKAc5Cr0BZHAABV"}
+{"level":"info","message":"User disconnected: gLeSQbKAc5Cr0BZHAABV"}
+{"level":"info","message":"User connected: PQsov65JjNTsrqzBAABY"}
+{"level":"info","message":"User disconnected: PQsov65JjNTsrqzBAABY"}
+{"level":"info","message":"User connected: gY3IawxKCbhH_ehfAABb"}
+{"level":"info","message":"User disconnected: gY3IawxKCbhH_ehfAABb"}
+{"level":"info","message":"User connected: 3D7E1SN4sktcNlZJAABe"}
+{"level":"info","message":"User disconnected: 3D7E1SN4sktcNlZJAABe"}
+{"level":"info","message":"User connected: R2ibKsBIzYz0nOtEAABh"}
+{"level":"info","message":"User disconnected: R2ibKsBIzYz0nOtEAABh"}
+{"level":"info","message":"User connected: 7FbYXfFd3j8-Z3D8AABk"}

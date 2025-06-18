@@ -21,6 +21,7 @@
   },
   "homepage": "https://github.com/mab-007/chesspay-be#readme",
   "devDependencies": {
+    "@types/cors": "^2.8.19",
     "@types/express": "^5.0.2",
     "@types/node": "^22.15.30",
     "@types/socket.io": "^3.0.1",
@@ -29,6 +30,7 @@
   },
   "dependencies": {
     "axios": "^1.9.0",
+    "cors": "^2.8.5",
     "dotenv": "^16.5.0",
     "express": "^5.1.0",
     "ioredis": "^5.6.1",

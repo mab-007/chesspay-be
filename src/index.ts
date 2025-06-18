@@ -7,6 +7,8 @@ import http from 'http'; // Still needed if you want a fallback or for other pur
 import initializeSocketIO from './internal/socket/socket.handler';
 import logger from './utils/logger';
 import redisClient from './utils/redis.client';
+import cors from 'cors'; // Import the cors middleware
+
 
 const app = express();
 const port = process.env.PORT || 3000;
@@ -19,12 +21,22 @@ export const io = new SocketIOServer(httpServer, { // Initialize Socket.IO serve
   }
 });
 
+// Enable CORS for all routes
+app.use(cors()); // You can configure this further if needed, e.g., app.use(cors({ origin: 'http://your-frontend-domain.com' }))
 
+
+
+// Middleware to parse JSON bodies
+app.use(express.json());
+// Middleware to parse URL-encoded bodies
+app.use(express.urlencoded({ extended: true }));
 
 app.get('/', (req: Request, res: Response) => {
   res.send('Hello, TypeScript Backend!');
 });
 
+
+app.use(router);
 // Catch-all for undefined API routes (must be after app.use(router))
 app.use((req: Request, res: Response, next: NextFunction) => {
   if (!req.route) { // If no route was matched by Express router
@@ -33,7 +45,6 @@ app.use((req: Request, res: Response, next: NextFunction) => {
     next();
   }
 });
-app.use(router);
 
 
 const startServer = async () => {

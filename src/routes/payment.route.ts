@@ -50,6 +50,7 @@ class PaymentRoute {
 
         this.router.post('/verify-payment', async (req, res) : Promise<any> => {
             try {
+                console.log('Received request to verify payment:', req.body);
                 const { orderId, paymentId, signature } = req.body;
 
                 if (!orderId || !paymentId || !signature) {
