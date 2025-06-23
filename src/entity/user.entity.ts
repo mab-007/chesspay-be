@@ -25,7 +25,7 @@ const userSchema = new mongoose.Schema<IUser>({
     },
     password_hash: {
         type: String,
-        required: true,
+        required: false,
     },
     first_name: {
         type: String,
@@ -41,7 +41,7 @@ const userSchema = new mongoose.Schema<IUser>({
     },
     profile_picture_url: {
         type: String,
-        required: true,
+        required: false,
         default: '',
     },
     is_active: {
