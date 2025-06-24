@@ -27,7 +27,7 @@ class PaymentRoute {
                     throw new Error('Failed to create order');
                 }
                 
-                return res.status(201).send(
+                return res.status(200).send(
                     {
                         status: 'success',
                         data: createOrderRes,
