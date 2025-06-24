@@ -18,6 +18,11 @@ const userSchema = new mongoose.Schema<IUser>({
         required: true,
         unique: true,
     },
+    status: {
+        type: String,
+        required: true,
+        default: 'ACTIVE',
+    },
     country: {
         type: String,
         required: true,
@@ -36,7 +41,7 @@ const userSchema = new mongoose.Schema<IUser>({
         required: false,
     },
     date_of_birth: {
-        type: Date,
+        type: Number,
         required: false,
     },
     profile_picture_url: {
