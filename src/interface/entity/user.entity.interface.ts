@@ -2,11 +2,12 @@ export interface IUser {
     user_id: string;
     username: string;
     email: string;
+    status: string;
     country: string;
-    password_hash: string;
+    password_hash?: string;
     first_name?: string;
     last_name?: string;
-    date_of_birth?: Date;
+    date_of_birth?: number;
     profile_picture_url?: string;
     is_active: boolean;
     created_at?: Date;

@@ -8,7 +8,7 @@ export interface IReward {
     reward_date: number;
     reward_description?: string;
     reward_reference?: string;
-    is_active: boolean;
+    is_setteled: boolean;
     created_at?: Date;
     updated_at?: Date;
 }

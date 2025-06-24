@@ -27,7 +27,7 @@ class PaymentRoute {
                     throw new Error('Failed to create order');
                 }
                 
-                return res.status(201).send(
+                return res.status(200).send(
                     {
                         status: 'success',
                         data: createOrderRes,
@@ -50,6 +50,7 @@ class PaymentRoute {
 
         this.router.post('/verify-payment', async (req, res) : Promise<any> => {
             try {
+                console.log('Received request to verify payment:', req.body);
                 const { orderId, paymentId, signature } = req.body;
 
                 if (!orderId || !paymentId || !signature) {
@@ -74,6 +75,8 @@ class PaymentRoute {
                 });
             }
         });
+
+        
     }
 
 }

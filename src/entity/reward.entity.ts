@@ -36,7 +36,7 @@ const rewardSchema = new mongoose.Schema<IReward>({
     reward_reference: {
         type: String,
     },
-    is_active: {
+    is_setteled: {
         type: Boolean,
         required: true,
     }
