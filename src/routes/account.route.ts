@@ -1,5 +1,6 @@
 import { Router } from "express";
 import AccountService from "../internal/service/account.service";
+import logger from "../utils/logger";
 
 class AccountRoute {
     public router: Router;
@@ -13,31 +14,28 @@ class AccountRoute {
 
     private initializeRoutes(): void {
         //Get Account Details useing user id
-        this.router.get("/:id", async (req, res) => {
+        this.router.get("/:id", async (req, res) : Promise<any> => {
             try {
                 const userId = req.params.id;
+                if(!userId) throw new Error("User id is required");
                 const accountDetails = await this.accountService.getAccountDetails(userId);
-                res.status(200).json(accountDetails);
+                return res.status(200).json({
+                    success: true,
+                    data: accountDetails,
+                    message: "Account details fetched successfully",
+                    error: null,
+                });
             }
             catch (error) {
-                res.status(500).json({ error: "Internal Server Error" });
+                logger.error(`Error in fetching account details for user: ${req.params.id}`)
+                return res.status(500).json({ 
+                    success: false, 
+                    data: null, 
+                    message: "Internal Server Error", 
+                    error: "Internal Server Error" 
+                });
             }
-        });
-
-        //Update account balance usering user_id and account_id
-        this.router.put("/:id", async (req, res) => {
-            try {
-                const userId = req.params.id;
-                const { account_id, balance, type } = req.body;
-                const updatedBalance = await this.accountService.updateAccountBalance(userId, account_id, balance, type);
-                res.status(200).json(updatedBalance);
-            } catch (error) {
-                res.status(500).json({ error: "Internal Server Error" });
-            }
-
-        })
-
-        
+        });       
     }
 }
 

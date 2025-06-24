@@ -4,7 +4,8 @@ import { IAccount } from "../interface/entity/account.entity.interface";
 const AccountSchema = new mongoose.Schema<IAccount>({ 
   user_id: {type: String, required: true},
   account_id: {type: String, required: true},
-  account_type: {type: String, required: true},
+  account_status: {type: String, required: true},
+  reward_amount_balance: {type: Number, required: true},
   account_balance: {type: Number, required: true},
   currency: {type: String, required: true},
   is_active: {type: Boolean, required: true},
