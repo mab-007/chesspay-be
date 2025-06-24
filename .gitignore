@@ -6,3 +6,8 @@ dist/
 
 # Environment variables
 .env
+
+
+dev.env
+
+combined.log

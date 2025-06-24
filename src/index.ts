@@ -8,6 +8,7 @@ import initializeSocketIO from './internal/socket/socket.handler';
 import logger from './utils/logger';
 import redisClient from './utils/redis.client';
 import cors from 'cors'; // Import the cors middleware
+import { GameUpdateSqsWorker } from './worker/matchmaking/gameudpate.sqs.worker';
 
 
 const app = express();
@@ -54,6 +55,10 @@ const startServer = async () => {
     initializeSocketIO(io); // Initialize Socket.IO with the server instance
 
     await redisClient.connect(); // Connect to Redis
+    logger.info('Initializing background workers...');
+    const gameUpdateWorker = new GameUpdateSqsWorker();
+    gameUpdateWorker.start();
+
     // await initializeGlobalSocketServer();
     httpServer.listen(port, () => {
       // Use logger here instead of console.log for consistency, or keep console.log if preferred for startup

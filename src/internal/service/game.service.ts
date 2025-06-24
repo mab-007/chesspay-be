@@ -69,6 +69,16 @@ class GameService {
 
     }
 
+    public async saveGameHitory() : Promise<void> {
+        try {
+            
+
+        } catch (err) {
+            logger.error(`Error saving game history: ${err}`);
+            throw new Error(`Error saving game history: ${err}`);
+        }
+    }
+
     public findMatch(currentUser: Player, availablePlayers: Player[]): MatchedPair | null {
         if (!currentUser || availablePlayers.length === 0) {
             return null;
@@ -148,12 +158,14 @@ class GameService {
                 if (player2Socket && player2Socket.connected) {
                     player2Socket.emit('matchmakingUpdate', { message: 'Opponent disconnected before game start. Please try again.' });
                 }
+                //TODO: Push event to queue for db entry
                 return true; // Processed, but game not started
             }
             
             if (!player2Socket || !player2Socket.connected) {
                 logger.error(`Player 2 (${player2Details.socket_id}) disconnected after match. Informing player 1.`);
                 player1Socket.emit('matchmakingUpdate', { message: 'Opponent disconnected before game start. Please try again.' });
+                //TODO: Push event to queue for db entry
                 return true; // Processed, but game not started
             }
 
@@ -187,6 +199,7 @@ class GameService {
                 players: gamePlayers,
                 currentPlayerTurn,
             });
+            //TODO: Push event to queue for db entry
             logger.info(`Game ${roomId} started for ${gamePlayers[0].username} and ${gamePlayers[1].username}`);
             return true;
         } catch (err) {

@@ -102,8 +102,7 @@ export default function initializeSocketIO(io: Server) {
 
         // Broadcast the move to the other player in the room
         socket.to(roomId).emit('opponentMove', { move, nextPlayerTurn: room.currentPlayerTurn });
-
-        //TODO: push the move to reflect in the db
+        //TODO: Push event to queue for db entry
       } else {
         logger.warn(`Invalid move attempt in room ${roomId} from ${socket.id}`);
         // Optionally, send an error back to the sender

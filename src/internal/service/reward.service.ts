@@ -1,7 +1,8 @@
 import { IReward } from "../../interface/entity/reward.entity.inteface";
 import RewardRepository from "../../repository/reward.repository";
-import { SreviceConstants } from "../../utils/constant.utils";
+import { ServiceConstants } from "../../utils/constant.utils"; // Corrected typo SreviceConstants -> ServiceConstants
 import logger from "../../utils/logger";
+import { v4 as uuidv4 } from 'uuid'; // Using UUID for more reliable unique IDs
 
 type DepositToReward = {
     depositAmount : number;
@@ -20,33 +21,38 @@ class RewardService {
 
 
 
-    public calculateRewardInDepositAmount(user_id: string, amount: number, currency: string) : DepositToReward {
+    // This method performs DB writes, so it MUST be async and awaited by the caller.
+    public async calculateRewardInDepositAmount(user_id: string, amount: number, currency: string) : Promise<DepositToReward> {
         try {
-            let modifiedDepositAmount : number = (amount / (1 + SreviceConstants.DEPOSIT_TAX_RATE));
-            let rewardAmount = amount - modifiedDepositAmount;
+            // Rounding is crucial for financial calculations to avoid floating point inaccuracies.
+            const modifiedDepositAmountRaw = (amount / (1 + ServiceConstants.DEPOSIT_TAX_RATE));
+            const modifiedDepositAmount = Math.round(modifiedDepositAmountRaw * 100) / 100;
+            const rewardAmount = Math.round((amount - modifiedDepositAmount) * 100) / 100;
+
             const res : DepositToReward = {
                 depositAmount: amount,
                 rewardAmount: rewardAmount,
                 modifiedDepositAmount: modifiedDepositAmount
             }
 
+            // Using a timestamp for a unique ID is unreliable and can cause collisions.
             const rewardObj : IReward = {
                 user_id: user_id,
-                reward_id: 'REWARD-' + new Date().getTime(),
+                reward_id: `REWARD-${uuidv4()}`,
                 reward_amount: rewardAmount,
                 reward_status: 'ACTIVE',
                 reward_date: new Date().getTime(),
                 reward_currency: currency,
-                reward_type: 'SIGNUP_REWARD',
-                reward_description: 'NEW_USER_SIGNUP_REWARD',
+                reward_type: 'DEPOSIT_REWARD',
+                reward_description: 'REWARD_ON_DEPOSIT',
                 is_setteled: false
-                
             }
-            this.rewardRepository.createReward(rewardObj);
+            // CRITICAL: The async `createReward` call must be awaited.
+            await this.rewardRepository.createReward(rewardObj);
             return res;
         } catch (err) {
-            logger.error('Error in calculating reward in deposit amount');
-            throw new Error(`Error in calculating reward in deposit amount ${user_id}`)
+            logger.error(`Error calculating reward for user ${user_id}`, { error: err, amount });
+            throw new Error(`Failed to calculate reward for user ${user_id}.`);
         }
     }
 
@@ -55,7 +61,7 @@ class RewardService {
 
             const rewardObj : IReward = {
                 user_id: user_id,
-                reward_id: 'REWARD-' + new Date().getTime(),
+                reward_id: `REWARD-${uuidv4()}`,
                 reward_amount: reward_amount,
                 reward_status: 'ACTIVE',
                 reward_date: new Date().getTime(),
@@ -66,25 +72,27 @@ class RewardService {
                 is_setteled: false
             }
 
-            const result = this.rewardRepository.createReward(rewardObj);
+            // CRITICAL: Await the promise to get the actual result.
+            const result = await this.rewardRepository.createReward(rewardObj);
+            // `!!Promise` is always true. This now correctly checks if a result was returned.
             return !!result;
         } catch (err) {
-            logger.error(`Error in adding new reward for user ${user_id}`);
-            throw new Error(`Error in adding new reward for user ${user_id}`);
+            logger.error(`Error adding new reward for user ${user_id}`, { error: err });
+            throw new Error(`Failed to add new reward for user ${user_id}.`);
         }
     }
 
     public async markRewardAsSettled(reward_id: string) : Promise<Boolean> {
         try {
-            const rewardObj : Partial<IReward> = {
-                reward_id: reward_id,
+            const updates : Partial<IReward> = {
                 is_setteled: true
             }
-            const result = this.rewardRepository.updateReward(reward_id, rewardObj);
+            // CRITICAL: Await the promise to get the actual result.
+            const result = await this.rewardRepository.updateReward(reward_id, updates);
             return !!result;
         } catch (err) {
-            logger.error(`Error in marking reward as settled for reward ${reward_id}`);
-            throw new Error(`Error in marking reward as settled for reward ${reward_id}`);
+            logger.error(`Error marking reward as settled for reward ${reward_id}`, { error: err });
+            throw new Error(`Failed to mark reward as settled for reward ${reward_id}.`);
         }
 
     }
