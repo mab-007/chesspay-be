@@ -4,6 +4,8 @@ import redisClient, { addUserToMatchmakingQueue } from "../../utils/redis.client
 import RealtimeMatchmaking, { UserDetailsRedisObj } from "../../worker/matchmaking/realtime.matchmaking.worker";
 import { Server, Socket } from "socket.io";
 import { Room, rooms } from "../socket/socket.handler";
+import { IGame } from "../../interface/entity/game.entity.interface";
+import GameRepository from "../../repository/game.repository";
 
 type GameOutcome = 'W' | 'L' | 'D'; // Win, Loss, Draw
 
@@ -37,7 +39,13 @@ const MAX_RATING_ITERATIONS = 10; // Max attempts to widen rating gap (e.g., up 
 class GameService {
 
     private realtimeMatchmakingService = new RealtimeMatchmaking();
-    
+    private gameRepository : GameRepository;
+
+    constructor() {
+        this.gameRepository = new GameRepository();
+    }
+
+
 
 
 
@@ -69,7 +77,7 @@ class GameService {
 
     }
 
-    public async saveGameHitory() : Promise<void> {
+    public async updateGameMove(game_id: string, game_moves_fen: string) : Promise<void> {
         try {
             
 
@@ -79,6 +87,47 @@ class GameService {
         }
     }
 
+    public async updateGameStatus(user_id: string, game_id: string, game_status: string, game_result: string) : Promise<IGame> {
+        try {
+            const gameObj : Partial<IGame> = {
+                user_id: user_id,
+                game_id: game_id,
+                game_status: game_status,
+                game_result: game_result
+            }
+            const res = await this.gameRepository.updateGame(gameObj);
+            if(!res) throw new Error(`Error updating game status in db`);
+            return res;
+        } catch (err) {
+            logger.error(`Error updating game status: ${err}`);
+            throw new Error(`Error updating game status: ${err}`);
+        }
+    }
+
+    public async createNewGame(user_id: string, selected_peiece_color: string, opponent_id: string, game_type: string, game_moves_fen: Array<string>, game_result: string, transaction_id: string) : Promise<IGame> {
+        try {
+            const gameObj : IGame = {
+                user_id: user_id,
+                opponent_id: opponent_id,
+                game_id: 'GAME-' + new Date().getTime(),
+                game_type: game_type,
+                game_player_black: selected_peiece_color === 'BLACK' ? user_id : opponent_id,
+                game_player_white: selected_peiece_color === 'WHITE' ? user_id : opponent_id,
+                game_room_id: 'ROOM-' + new Date().getTime(),
+                game_status: 'IN_PROGRESS',
+                game_moves_fen: game_moves_fen,
+                game_result: game_result,
+                transaction_id: transaction_id,
+                game_date: new Date()
+            }
+            const res = await this.gameRepository.createGame(gameObj);
+            if(!res) throw new Error(`Error creating new game`);
+            return res;
+        } catch (err) {
+            logger.error(`Error creating new game: ${err}`);
+            throw new Error(`Error creating new game: ${err}`);
+        }
+    }
     public findMatch(currentUser: Player, availablePlayers: Player[]): MatchedPair | null {
         if (!currentUser || availablePlayers.length === 0) {
             return null;

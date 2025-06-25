@@ -1,5 +1,6 @@
 export interface IGame {
     user_id: string;
+    opponent_id: string;
     game_id: string;
     game_type: string;
     game_player_black: string;
