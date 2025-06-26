@@ -4,6 +4,7 @@ export interface IUser {
     email: string;
     status: string;
     country: string;
+    raiting_id?: string;
     password_hash?: string;
     first_name?: string;
     last_name?: string;
