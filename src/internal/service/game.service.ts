@@ -7,6 +7,9 @@ import { Room, getRoom, saveRoom } from "../socket/socket.handler";
 import { IGame } from "../../interface/entity/game.entity.interface";
 import GameRepository from "../../repository/game.repository";
 import AccountService from "./account.service";
+import { IGameHistoryResposne } from "../../interface/ui-response/api.response.interface";
+import RaitingRepository from "../../repository/raiting.repository";
+import { IRaiting } from "../../interface/entity/raiting.entity.interface";
 
 type GameOutcome = 'W' | 'L' | 'D'; // Win, Loss, Draw
 
@@ -42,17 +45,16 @@ class GameService {
     private realtimeMatchmakingService = new RealtimeMatchmaking();
     private gameRepository : GameRepository;
     private accountService : AccountService;
+    private raitingRepository : RaitingRepository;
+
 
 
 
     constructor() {
         this.gameRepository = new GameRepository();
         this.accountService = new AccountService();
+        this.raitingRepository = new RaitingRepository();
     }
-
-
-
-
 
     private calculateStreakSimilarity(streak1: GameOutcome[], streak2: GameOutcome[]): number {
         let similarity = 0;
@@ -66,9 +68,6 @@ class GameService {
     }
 
     private assignColorToUser(): { p1Color: 'white' | 'black', p2Color: 'white' | 'black' }  {
-        // Rule 5: "Choose color of the user by simply by looking if opponent if greater number of color played
-        // as compared to the user then user should get the color (i.e black/white)"
-        // This means if the opponent has played more of a certain color than the user, the user gets that color.
 
         const p1Color = Math.random() < 0.5 ? 'white' : 'black';
         return {
@@ -77,10 +76,6 @@ class GameService {
         };
     }
 
-
-    private findOpponnentByCriteria(currentUser: Player) {
-
-    }
 
     public async updateGameMove(game_id: string, game_moves_fen: string) : Promise<void> {
         try {
@@ -109,15 +104,17 @@ class GameService {
         }
     }
 
-    public async createNewGame(user_id: string, selected_peiece_color: string, opponent_id: string, game_type: string, game_moves_fen: Array<string>, game_result: string, transaction_id: string) : Promise<IGame> {
+    public async createNewGame(user_id: string, selected_peiece_color: string, opponent_id: string, game_type: string, user_rating: number, opponent_rating: number, game_moves_fen: Array<string>, game_result: string, transaction_id: string) : Promise<IGame> {
         try {
             const gameObj : IGame = {
                 user_id: user_id,
                 opponent_id: opponent_id,
                 game_id: 'GAME-' + new Date().getTime(),
                 game_type: game_type,
-                game_player_black: selected_peiece_color === 'BLACK' ? user_id : opponent_id,
-                game_player_white: selected_peiece_color === 'WHITE' ? user_id : opponent_id,
+                black_player_id: selected_peiece_color === 'BLACK' ? user_id : opponent_id,
+                white_player_id: selected_peiece_color === 'WHITE' ? user_id : opponent_id,
+                black_player_raiting: selected_peiece_color === 'BLACK' ? user_rating : opponent_rating,
+                white_player_raiting: selected_peiece_color === 'WHITE' ?  user_rating : opponent_rating,
                 game_room_id: 'ROOM-' + new Date().getTime(),
                 game_status: 'IN_PROGRESS',
                 game_moves_fen: game_moves_fen,
@@ -281,6 +278,42 @@ class GameService {
         } catch(err) {
             logger.error(`Error adding user with ${socket.id} and username ${username} to matchmaking queue: ${err}`);
             return false;
+        }
+    }
+    
+    public async getGameHistory(user_id: string) : Promise<IGameHistoryResposne[]> {
+        try {
+            const result : IGame[] = await this.gameRepository.getGameHistoryByUserId(user_id);
+            let gameHistoryArray : IGameHistoryResposne[] = [];
+
+            result.forEach(game => {
+                let gameHistoryObj : IGameHistoryResposne = {
+                    game_id: game.game_id,
+                    game_type: game.game_type,
+                    black_player_id: game.black_player_id,
+                    white_player_id: game.white_player_id,
+                    game_winner_id: game?.game_winner_id || '',
+                    white_player_raiting: game.white_player_raiting,
+                    black_player_raiting: game.black_player_raiting
+                }
+                gameHistoryArray.push(gameHistoryObj);
+            });
+
+            return gameHistoryArray;
+        } catch (err) {
+            logger.error(`Error fetching game history for user ${user_id}: ${err}`);
+            throw new Error(`Error fetching game history for user ${user_id}: ${err}`);
+        }
+    }
+
+    public async getUserGameRating(user_id: string) : Promise<IRaiting> {
+        try {   
+            const result : IRaiting | null = await this.raitingRepository.getRaiting(user_id);
+            if(!result) throw new Error(`Error fetching user game rating for user ${user_id}`);
+            return result;
+        } catch(err) {
+            logger.error(`Error fetching user game rating for user ${user_id}: ${err}`);
+            throw new Error (`Error fetching user game rating for user ${user_id}: ${err}`)
         }
     }
 }

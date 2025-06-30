@@ -16,6 +16,10 @@ class GameRepository {
     public async updateGame(game: Partial<IGame>): Promise<IGame | null> {
         return await this.gameModel.findOneAndUpdate({ game_id: game.game_id }, game, { new: true });
     }
+
+    public async getGameHistoryByUserId(user_id: string): Promise<IGame[]> {
+        return await this.gameModel.find({ user_id: user_id }).exec();
+    }
 }
 
 export default GameRepository;

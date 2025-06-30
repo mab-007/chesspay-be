@@ -76,7 +76,52 @@ class PaymentRoute {
             }
         });
 
-        
+        this.router.get('/addmoney/:user_id', async (req, res) : Promise<any> => {
+            try {
+                const user_id = req.params.user_id
+                if(!user_id) throw new Error('user_id is required');
+                const result = await this.paymentService.fetchAddMoneyTransactionHistory(user_id);
+
+                return res.status(200).send({
+                    status: 'success',
+                    data: result,
+                    message: 'Add money transaction history fetched successfully',
+                    error: null
+                });
+            } catch (error) {
+                console.error('Error fetching add money transaction history:', error);
+                return res.status(500).send({
+                    status: 'error',
+                    data: null,
+                    message: 'Failed to fetch add money transaction history',
+                    error: 'Internal Server Error'
+                });
+            }
+        });
+
+        this.router.get('/withdrawal/:user_id', async (req, res) : Promise<any> => {
+            try {
+                const user_id = req.params.user_id
+                if(!user_id) throw new Error('user_id is required');
+                const result = await this.paymentService.fetchwithdrawalTransactionHistory(user_id);
+
+                return res.status(200).send({
+                    status: 'success',
+                    data: result,
+                    message: 'withdrawal transaction history fetched successfully',
+                    error: null
+                });
+
+            } catch (error) {
+                console.error('Error fetching withdrawal transaction history:', error);
+                return res.status(500).send({
+                    status: 'error',
+                    data: null,
+                    message: 'Failed to fetch withdrawal transaction history',
+                    error: 'Internal Server Error'
+                });
+            }
+        });
     }
 
 }

@@ -1,4 +1,5 @@
 import { IAccount } from "../../interface/entity/account.entity.interface";
+import { IAccountDetailsResp } from "../../interface/ui-response/api.response.interface";
 import AccountRepository from "../../repository/account.repository";
 import logger from "../../utils/logger";
 
@@ -11,11 +12,24 @@ class AccountService {
     }
 
 
-    public async getAccountDetails(user_id: string): Promise<any> {
+    public async getAccountDetails(user_id: string): Promise<IAccountDetailsResp> {
         try {
-            const result = await this.accountRepository.fetchAccountDetailsByUserId(user_id);
+            const result : IAccount | null = await this.accountRepository.fetchAccountDetailsByUserId(user_id);
             if(!result) throw new Error(`Account not found for user: ${user_id}`);
-            return result;
+            
+            const accountDetailsResp : IAccountDetailsResp = {
+                user_id: result.user_id,
+                account_id: result.account_id,
+                reward_amount_available: result.reward_amount_balance,
+                account_balance: result.account_balance,
+                amount_eligible_for_withdrwal: result.account_withdrawal_limit,
+                currency: result.currency,
+                total_winnings: 0,
+                min_account_withdrwal_limit: 100
+            
+            }
+
+            return accountDetailsResp;
         } catch(err) {
             logger.error(`Error in fetching account detais for user_id ${user_id} err ${err}`);
             throw new Error(`Error in fetching account detais for user_id ${user_id} err ${err}`);
