@@ -15,7 +15,7 @@ class UserRouter {
 
     private initializeRoutes(): void {
 
-        this.router.post('/users', async (req, res) : Promise<any>=> {
+        this.router.post('/', async (req, res) : Promise<any>=> {
             try {
                 const { username, email, country, password_hash, first_name, last_name, date_of_birth, profile_picture_url } = req.body;
                 const result = await this.userService.createUser(username, email, country, password_hash, first_name, last_name, date_of_birth, profile_picture_url);
@@ -37,7 +37,7 @@ class UserRouter {
             }
         });
 
-        this.router.get('/users/:id', async (req, res) : Promise<any> => {
+        this.router.get('/:id', async (req, res) : Promise<any> => {
             try {
                 const userId = req.params.id;
                 if(!userId) {
@@ -62,7 +62,7 @@ class UserRouter {
             }
         });
 
-        this.router.put('/users/:id', async (req, res) : Promise<any>=> {
+        this.router.put('/:id', async (req, res) : Promise<any>=> {
             try {
                 const userId = req.params.id;
                 if(!userId) {
@@ -86,6 +86,7 @@ class UserRouter {
                 });
             }
         });
+
     }
 
 

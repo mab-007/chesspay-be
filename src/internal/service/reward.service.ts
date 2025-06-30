@@ -1,8 +1,8 @@
+import { randomUUID } from "crypto";
 import { IReward } from "../../interface/entity/reward.entity.inteface";
 import RewardRepository from "../../repository/reward.repository";
 import { ServiceConstants } from "../../utils/constant.utils"; // Corrected typo SreviceConstants -> ServiceConstants
 import logger from "../../utils/logger";
-import { v4 as uuidv4 } from 'uuid'; // Using UUID for more reliable unique IDs
 
 type DepositToReward = {
     depositAmount : number;
@@ -38,7 +38,7 @@ class RewardService {
             // Using a timestamp for a unique ID is unreliable and can cause collisions.
             const rewardObj : IReward = {
                 user_id: user_id,
-                reward_id: `REWARD-${uuidv4()}`,
+                reward_id: `REWARD-${randomUUID()}`,
                 reward_amount: rewardAmount,
                 reward_status: 'ACTIVE',
                 reward_date: new Date().getTime(),
@@ -61,7 +61,7 @@ class RewardService {
 
             const rewardObj : IReward = {
                 user_id: user_id,
-                reward_id: `REWARD-${uuidv4()}`,
+                reward_id: `REWARD-${randomUUID()}`,
                 reward_amount: reward_amount,
                 reward_status: 'ACTIVE',
                 reward_date: new Date().getTime(),

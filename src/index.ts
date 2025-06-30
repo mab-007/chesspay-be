@@ -74,5 +74,34 @@ const startServer = async () => {
   }
 };
 
+const gracefulShutdown = (signal: string) => {
+  logger.info(`Received ${signal}. Shutting down gracefully...`);
+
+  // Stop the server from accepting new connections
+  httpServer.close(err => {
+    if (err) {
+      logger.error('Error closing HTTP server:', err);
+      process.exit(1);
+    }
+    logger.info('HTTP server closed.');
+
+    // Disconnect from Redis
+    redisClient.quit(() => {
+      logger.info('Redis client disconnected.');
+      // Now that all connections are closed, exit the process
+      process.exit(0);
+    });
+  });
+
+  // Force shutdown if graceful shutdown fails after a timeout
+  setTimeout(() => {
+    logger.error('Could not close connections in time, forcing shutdown.');
+    process.exit(1);
+  }, 10000); // 10 seconds
+};
 
 startServer();
+
+// Listen for termination signals
+process.on('SIGTERM', () => gracefulShutdown('SIGTERM'));
+process.on('SIGINT', () => gracefulShutdown('SIGINT'));

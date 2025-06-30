@@ -7,6 +7,7 @@ const AccountSchema = new mongoose.Schema<IAccount>({
   account_status: {type: String, required: true},
   reward_amount_balance: {type: Number, required: true},
   account_balance: {type: Number, required: true},
+  blocked_amount: {type: Number, required: true},
   currency: {type: String, required: true},
   is_active: {type: Boolean, required: true},
   account_withdrawal_limit: {type: Number, required: true},

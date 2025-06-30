@@ -810,3 +810,165 @@
 {"level":"info","message":"User connected: R2ibKsBIzYz0nOtEAABh"}
 {"level":"info","message":"User disconnected: R2ibKsBIzYz0nOtEAABh"}
 {"level":"info","message":"User connected: 7FbYXfFd3j8-Z3D8AABk"}
+{"level":"info","message":"MongoDB connected successfully."}
+{"level":"info","message":"Connected to Redis successfully."}
+{"level":"info","message":"Initializing background workers..."}
+{"level":"info","message":"MongoDB connected successfully."}
+{"level":"info","message":"Connected to Redis successfully."}
+{"level":"info","message":"Initializing background workers..."}
+{"level":"info","message":"GameUpdateSqsWorker initialized for queue: https://sqs.ap-south-1.amazonaws.com/160885259409/GAME-DB-EVENT-SQS"}
+{"level":"info","message":"Starting SQS worker..."}
+{"level":"info","message":"Server running at http://localhost:3000"}
+{"error":{"name":"CredentialsProviderError","tryNextLink":false},"level":"error","message":"Error receiving messages from SQS:"}
+{"error":{"name":"CredentialsProviderError","tryNextLink":false},"level":"error","message":"Error receiving messages from SQS:"}
+{"error":{"name":"CredentialsProviderError","tryNextLink":false},"level":"error","message":"Error receiving messages from SQS:"}
+{"error":{"name":"CredentialsProviderError","tryNextLink":false},"level":"error","message":"Error receiving messages from SQS:"}
+{"error":{"name":"CredentialsProviderError","tryNextLink":false},"level":"error","message":"Error receiving messages from SQS:"}
+{"level":"info","message":"Stopping SQS worker... will exit after current poll."}
+{"level":"info","message":"Worker has stopped polling."}
+{"level":"info","message":"MongoDB connected successfully."}
+{"level":"info","message":"Connected to Redis successfully."}
+{"level":"info","message":"Initializing background workers..."}
+{"level":"info","message":"MongoDB connected successfully."}
+{"level":"info","message":"Connected to Redis successfully."}
+{"level":"info","message":"Initializing background workers..."}
+{"level":"info","message":"GameUpdateSqsWorker initialized for queue: https://sqs.ap-south-1.amazonaws.com/160885259409/GAME-DB-EVENT-SQS"}
+{"level":"info","message":"Starting SQS worker..."}
+{"level":"info","message":"Server running at http://localhost:8000"}
+{"error":{"$fault":"client","$metadata":{"attempts":1,"httpStatusCode":403,"requestId":"cad07adc-c8d9-5440-a2eb-1a0524be34ca","totalRetryDelay":0},"Code":"AccessDenied","Error":{"Code":"AccessDenied","Message":"User: arn:aws:iam::160885259409:user/SQS-USER is not authorized to perform: sqs:receivemessage on resource: arn:aws:sqs:ap-south-1:160885259409:GAME-DB-EVENT-SQS because no identity-based policy allows the sqs:receivemessage action","Type":"Sender","message":"User: arn:aws:iam::160885259409:user/SQS-USER is not authorized to perform: sqs:receivemessage on resource: arn:aws:sqs:ap-south-1:160885259409:GAME-DB-EVENT-SQS because no identity-based policy allows the sqs:receivemessage action"},"Type":"Sender","__type":"com.amazon.coral.service#AccessDeniedException","message":"User: arn:aws:iam::160885259409:user/SQS-USER is not authorized to perform: sqs:receivemessage on resource: arn:aws:sqs:ap-south-1:160885259409:GAME-DB-EVENT-SQS because no identity-based policy allows the sqs:receivemessage action","name":"AccessDenied"},"level":"error","message":"Error receiving messages from SQS:"}
+{"error":{"$fault":"client","$metadata":{"attempts":1,"httpStatusCode":403,"requestId":"28888700-115d-59d9-a29c-e7d9fd3143f6","totalRetryDelay":0},"Code":"AccessDenied","Error":{"Code":"AccessDenied","Message":"User: arn:aws:iam::160885259409:user/SQS-USER is not authorized to perform: sqs:receivemessage on resource: arn:aws:sqs:ap-south-1:160885259409:GAME-DB-EVENT-SQS because no identity-based policy allows the sqs:receivemessage action","Type":"Sender","message":"User: arn:aws:iam::160885259409:user/SQS-USER is not authorized to perform: sqs:receivemessage on resource: arn:aws:sqs:ap-south-1:160885259409:GAME-DB-EVENT-SQS because no identity-based policy allows the sqs:receivemessage action"},"Type":"Sender","__type":"com.amazon.coral.service#AccessDeniedException","message":"User: arn:aws:iam::160885259409:user/SQS-USER is not authorized to perform: sqs:receivemessage on resource: arn:aws:sqs:ap-south-1:160885259409:GAME-DB-EVENT-SQS because no identity-based policy allows the sqs:receivemessage action","name":"AccessDenied"},"level":"error","message":"Error receiving messages from SQS:"}
+{"level":"info","message":"Stopping SQS worker... will exit after current poll."}
+{"level":"info","message":"Worker has stopped polling."}
+{"level":"info","message":"MongoDB connected successfully."}
+{"level":"info","message":"Connected to Redis successfully."}
+{"level":"info","message":"Initializing background workers..."}
+{"level":"info","message":"MongoDB connected successfully."}
+{"level":"info","message":"Connected to Redis successfully."}
+{"level":"info","message":"Initializing background workers..."}
+{"level":"info","message":"MongoDB connected successfully."}
+{"level":"info","message":"Connected to Redis successfully."}
+{"level":"info","message":"Initializing background workers..."}
+{"level":"info","message":"GameUpdateSqsWorker initialized for queue: https://sqs.ap-south-1.amazonaws.com/160885259409/GAME-DB-EVENT-SQS"}
+{"level":"info","message":"Starting SQS worker..."}
+{"level":"info","message":"Server running at http://localhost:3000"}
+{"level":"info","message":"User connected: we7Dsw-mX_zTCUVfAAAC"}
+{"level":"info","message":"User we7Dsw-mX_zTCUVfAAAC (player) looking for a match with preferences:"}
+{"command":{"args":["-- KEYS[1]: The key for the global matchmaking sorted set (e.g., 'global_matchmaking_queue')\n-- ARGV[1]: The current player's rating (e.g., 1500)\n-- ARGV[2]: The current player's details as a JSON string (your \"schema structure\")\n-- ARGV[3]: The ideal rating tolerance (e.g., 50)\n-- ARGV[4]: The user's consent for an extended search ('true' or 'false')\n\nlocal queue_key = KEYS[1]\nlocal rating = tonumber(ARGV[1])\nlocal player_details_json = ARGV[2] -- This JSON string is your schema\nlocal tolerance = tonumber(ARGV[3])\nlocal extended_search_consent = ARGV[4] == 'true'\n\n-- To prevent matching with oneself, first remove the current player.\n-- This has no effect if the player isn't already in the queue.\nredis.call('ZREM', queue_key, player_details_json)\n\n-- STEP 1: Perform the initial, strict search within the ideal tolerance.\nlocal ideal_min_rating = rating - tolerance\nlocal ideal_max_rating = rating + tolerance\nlocal ideal_opponents = redis.call('ZRANGEBYSCORE', queue_key, ideal_min_rating, ideal_max_rating, 'LIMIT', 0, 1)\n\nif #ideal_opponents > 0 then\n    -- Success! Found a perfect match.\n    local opponent_details = ideal_opponents[1]\n    redis.call('ZREM', queue_key, opponent_details)\n    return {player_details_json, opponent_details}\nend\n\n-- STEP 2: If no ideal match, perform extended search if the user consented.\nif extended_search_consent then\n    -- Find the closest opponent with a HIGHER rating.\n    local higher_opp_array = redis.call('ZRANGEBYSCORE', queue_key, '(' .. rating, '+inf', 'LIMIT', 0, 1)\n\n    -- Find the closest opponent with a LOWER rating.\n    local lower_opp_array = redis.call('ZREVRANGEBYSCORE', queue_key, '(' .. rating, '-inf', 'LIMIT', 0, 1)\n\n    local final_opponent_details = nil\n\n    if #higher_opp_array > 0 and #lower_opp_array > 0 then\n        -- Both a higher and lower opponent exist. Find which one is closer.\n        local higher_opp_details = higher_opp_array[1]\n        local lower_opp_details = lower_opp_array[1]\n\n        local higher_opp_rating = tonumber(redis.call('ZSCORE', queue_key, higher_opp_details))\n        local lower_opp_rating = tonumber(redis.call('ZSCORE', queue_key, lower_opp_details))\n\n        if (higher_opp_rating - rating) < (rating - lower_opp_rating) then\n            final_opponent_details = higher_opp_details\n        else\n            final_opponent_details = lower_opp_details\n        end\n    elseif #higher_opp_array > 0 then\n        final_opponent_details = higher_opp_array[1]\n    elseif #lower_opp_array > 0 then\n        final_opponent_details = lower_opp_array[1]\n    end\n\n    if final_opponent_details then\n        -- Success! Found the next best match.\n        redis.call('ZREM', queue_key, final_opponent_details)\n        return {player_details_json, final_opponent_details}\n    end\nend\n\n-- FINAL STEP: If all match attempts are exhausted, add the player to the queue.\n-- This block is reached if:\n-- 1. No ideal match was found AND extended search was not allowed.\n-- 2. No ideal match was found AND the extended search also found no one.\nredis.call('ZADD', queue_key, rating, player_details_json)\nreturn nil","1","matchmaking_sortedset_queue","[object Object]","{\"user_id\":\"\",\"rating\":{\"blitz\":800,\"bullet\":800,\"rapid\":800,\"puzzle\":800},\"socket_id\":\"we7Dsw-mX_zTCUVfAAAC\",\"win_percentage\":0.77,\"black_win_percentage\":0.7,\"white_win_percentage\":0.3,\"username\":\"player\"}","50","false"],"name":"eval"},"level":"error","message":"Error in RealtimeMatchmaking findMatch for user : ERR user_script:18: attempt to perform arithmetic on local 'rating' (a nil value) script: fc3c26fc15a128c970304e6546baf2111a3a3b9e, on @user_script:18.","stack":"ReplyError: ERR user_script:18: attempt to perform arithmetic on local 'rating' (a nil value) script: fc3c26fc15a128c970304e6546baf2111a3a3b9e, on @user_script:18.\n    at parseError (/Users/mab/Desktop/paychess.com/chesspay-be/node_modules/redis-parser/lib/parser.js:179:12)\n    at parseType (/Users/mab/Desktop/paychess.com/chesspay-be/node_modules/redis-parser/lib/parser.js:302:14)"}
+{"level":"info","message":"User we7Dsw-mX_zTCUVfAAAC (player) added to matchmaking queue, response received null"}
+{"level":"info","message":"User connected: LcQRRsJAVMxAJtvqAAAF"}
+{"level":"info","message":"User LcQRRsJAVMxAJtvqAAAF (player) looking for a match with preferences:"}
+{"command":{"args":["-- KEYS[1]: The key for the global matchmaking sorted set (e.g., 'global_matchmaking_queue')\n-- ARGV[1]: The current player's rating (e.g., 1500)\n-- ARGV[2]: The current player's details as a JSON string (your \"schema structure\")\n-- ARGV[3]: The ideal rating tolerance (e.g., 50)\n-- ARGV[4]: The user's consent for an extended search ('true' or 'false')\n\nlocal queue_key = KEYS[1]\nlocal rating = tonumber(ARGV[1])\nlocal player_details_json = ARGV[2] -- This JSON string is your schema\nlocal tolerance = tonumber(ARGV[3])\nlocal extended_search_consent = ARGV[4] == 'true'\n\n-- To prevent matching with oneself, first remove the current player.\n-- This has no effect if the player isn't already in the queue.\nredis.call('ZREM', queue_key, player_details_json)\n\n-- STEP 1: Perform the initial, strict search within the ideal tolerance.\nlocal ideal_min_rating = rating - tolerance\nlocal ideal_max_rating = rating + tolerance\nlocal ideal_opponents = redis.call('ZRANGEBYSCORE', queue_key, ideal_min_rating, ideal_max_rating, 'LIMIT', 0, 1)\n\nif #ideal_opponents > 0 then\n    -- Success! Found a perfect match.\n    local opponent_details = ideal_opponents[1]\n    redis.call('ZREM', queue_key, opponent_details)\n    return {player_details_json, opponent_details}\nend\n\n-- STEP 2: If no ideal match, perform extended search if the user consented.\nif extended_search_consent then\n    -- Find the closest opponent with a HIGHER rating.\n    local higher_opp_array = redis.call('ZRANGEBYSCORE', queue_key, '(' .. rating, '+inf', 'LIMIT', 0, 1)\n\n    -- Find the closest opponent with a LOWER rating.\n    local lower_opp_array = redis.call('ZREVRANGEBYSCORE', queue_key, '(' .. rating, '-inf', 'LIMIT', 0, 1)\n\n    local final_opponent_details = nil\n\n    if #higher_opp_array > 0 and #lower_opp_array > 0 then\n        -- Both a higher and lower opponent exist. Find which one is closer.\n        local higher_opp_details = higher_opp_array[1]\n        local lower_opp_details = lower_opp_array[1]\n\n        local higher_opp_rating = tonumber(redis.call('ZSCORE', queue_key, higher_opp_details))\n        local lower_opp_rating = tonumber(redis.call('ZSCORE', queue_key, lower_opp_details))\n\n        if (higher_opp_rating - rating) < (rating - lower_opp_rating) then\n            final_opponent_details = higher_opp_details\n        else\n            final_opponent_details = lower_opp_details\n        end\n    elseif #higher_opp_array > 0 then\n        final_opponent_details = higher_opp_array[1]\n    elseif #lower_opp_array > 0 then\n        final_opponent_details = lower_opp_array[1]\n    end\n\n    if final_opponent_details then\n        -- Success! Found the next best match.\n        redis.call('ZREM', queue_key, final_opponent_details)\n        return {player_details_json, final_opponent_details}\n    end\nend\n\n-- FINAL STEP: If all match attempts are exhausted, add the player to the queue.\n-- This block is reached if:\n-- 1. No ideal match was found AND extended search was not allowed.\n-- 2. No ideal match was found AND the extended search also found no one.\nredis.call('ZADD', queue_key, rating, player_details_json)\nreturn nil","1","matchmaking_sortedset_queue","[object Object]","{\"user_id\":\"\",\"rating\":{\"blitz\":800,\"bullet\":800,\"rapid\":800,\"puzzle\":800},\"socket_id\":\"LcQRRsJAVMxAJtvqAAAF\",\"win_percentage\":0.77,\"black_win_percentage\":0.7,\"white_win_percentage\":0.3,\"username\":\"player\"}","50","false"],"name":"eval"},"level":"error","message":"Error in RealtimeMatchmaking findMatch for user : ERR user_script:18: attempt to perform arithmetic on local 'rating' (a nil value) script: fc3c26fc15a128c970304e6546baf2111a3a3b9e, on @user_script:18.","stack":"ReplyError: ERR user_script:18: attempt to perform arithmetic on local 'rating' (a nil value) script: fc3c26fc15a128c970304e6546baf2111a3a3b9e, on @user_script:18.\n    at parseError (/Users/mab/Desktop/paychess.com/chesspay-be/node_modules/redis-parser/lib/parser.js:179:12)\n    at parseType (/Users/mab/Desktop/paychess.com/chesspay-be/node_modules/redis-parser/lib/parser.js:302:14)"}
+{"level":"info","message":"User LcQRRsJAVMxAJtvqAAAF (player) added to matchmaking queue, response received null"}
+{"level":"info","message":"MongoDB connected successfully."}
+{"level":"info","message":"Connected to Redis successfully."}
+{"level":"info","message":"Initializing background workers..."}
+{"level":"info","message":"GameUpdateSqsWorker initialized for queue: https://sqs.ap-south-1.amazonaws.com/160885259409/GAME-DB-EVENT-SQS"}
+{"level":"info","message":"Starting SQS worker..."}
+{"level":"info","message":"Server running at http://localhost:3000"}
+{"level":"info","message":"User connected: rzh5CpWIcIMUdanXAAAB"}
+{"level":"info","message":"User connected: bzPZpH4qKCJyq2K4AAAD"}
+{"level":"info","message":"MongoDB connected successfully."}
+{"level":"info","message":"Connected to Redis successfully."}
+{"level":"info","message":"Initializing background workers..."}
+{"level":"info","message":"GameUpdateSqsWorker initialized for queue: https://sqs.ap-south-1.amazonaws.com/160885259409/GAME-DB-EVENT-SQS"}
+{"level":"info","message":"Starting SQS worker..."}
+{"level":"info","message":"Server running at http://localhost:3000"}
+{"level":"info","message":"User connected: bS2EpFayF_2bTVOHAAAB"}
+{"level":"info","message":"User connected: orIp4gntLUT9g_rqAAAD"}
+{"level":"info","message":"MongoDB connected successfully."}
+{"level":"info","message":"Connected to Redis successfully."}
+{"level":"info","message":"Initializing background workers..."}
+{"level":"info","message":"GameUpdateSqsWorker initialized for queue: https://sqs.ap-south-1.amazonaws.com/160885259409/GAME-DB-EVENT-SQS"}
+{"level":"info","message":"Starting SQS worker..."}
+{"level":"info","message":"Server running at http://localhost:3000"}
+{"level":"info","message":"User connected: JGiUnjxx7YohF1f8AAAB"}
+{"level":"info","message":"User connected: NkzxWuSOys84BhunAAAD"}
+{"level":"info","message":"MongoDB connected successfully."}
+{"level":"info","message":"MongoDB connected successfully."}
+{"level":"info","message":"Connected to Redis successfully."}
+{"level":"info","message":"Initializing background workers..."}
+{"level":"info","message":"GameUpdateSqsWorker initialized for queue: https://sqs.ap-south-1.amazonaws.com/160885259409/GAME-DB-EVENT-SQS"}
+{"level":"info","message":"Starting SQS worker..."}
+{"level":"info","message":"Server running at http://localhost:3000"}
+{"level":"info","message":"User connected: 6S-SyzT9HRV3JUW9AAAB"}
+{"level":"info","message":"User connected: aXB75E6OiVHIf43EAAAD"}
+{"level":"info","message":"MongoDB connected successfully."}
+{"level":"info","message":"Connected to Redis successfully."}
+{"level":"info","message":"Initializing background workers..."}
+{"level":"info","message":"GameUpdateSqsWorker initialized for queue: https://sqs.ap-south-1.amazonaws.com/160885259409/GAME-DB-EVENT-SQS"}
+{"level":"info","message":"Starting SQS worker..."}
+{"level":"info","message":"Server running at http://localhost:3000"}
+{"level":"info","message":"MongoDB connected successfully."}
+{"level":"info","message":"Connected to Redis successfully."}
+{"level":"info","message":"Initializing background workers..."}
+{"level":"info","message":"GameUpdateSqsWorker initialized for queue: https://sqs.ap-south-1.amazonaws.com/160885259409/GAME-DB-EVENT-SQS"}
+{"level":"info","message":"Starting SQS worker..."}
+{"level":"info","message":"Server running at http://localhost:3000"}
+{"level":"info","message":"User connected: XU43mOYZb22PJSlsAAAB"}
+{"level":"info","message":"User connected: 2dsB2xo6YEteoF_aAAAD"}
+{"level":"info","message":"MongoDB connected successfully."}
+{"level":"info","message":"Connected to Redis successfully."}
+{"level":"info","message":"Initializing background workers..."}
+{"level":"info","message":"GameUpdateSqsWorker initialized for queue: https://sqs.ap-south-1.amazonaws.com/160885259409/GAME-DB-EVENT-SQS"}
+{"level":"info","message":"Starting SQS worker..."}
+{"level":"info","message":"Server running at http://localhost:3000"}
+{"level":"info","message":"User connected: xrtNUzowXXTgq_eZAAAB"}
+{"level":"info","message":"User connected: eMRhAnnoYG6lClpgAAAD"}
+{"level":"info","message":"MongoDB connected successfully."}
+{"level":"info","message":"Connected to Redis successfully."}
+{"level":"info","message":"Initializing background workers..."}
+{"level":"info","message":"GameUpdateSqsWorker initialized for queue: https://sqs.ap-south-1.amazonaws.com/160885259409/GAME-DB-EVENT-SQS"}
+{"level":"info","message":"Starting SQS worker..."}
+{"level":"info","message":"Server running at http://localhost:3000"}
+{"level":"info","message":"User connected: 4BYtGlxvMFGbf-kaAAAB"}
+{"level":"info","message":"User connected: tdfh-wh48DgKfPnkAAAD"}
+{"level":"info","message":"Stopping SQS worker... will exit after current poll."}
+{"level":"info","message":"Worker has stopped polling."}
+{"level":"info","message":"User disconnected: tdfh-wh48DgKfPnkAAAD"}
+{"level":"info","message":"User disconnected: 4BYtGlxvMFGbf-kaAAAB"}
+{"level":"info","message":"User connected: 3MCok6jBbS-K_6m_AAAG"}
+{"level":"info","message":"User disconnected: 3MCok6jBbS-K_6m_AAAG"}
+{"level":"info","message":"User connected: 9Y_IQ16LVDEnKwYYAAAJ"}
+{"level":"info","message":"User disconnected: 9Y_IQ16LVDEnKwYYAAAJ"}
+{"level":"info","message":"User connected: 48P7ZRSbR6DhjngoAAAM"}
+{"level":"info","message":"User 48P7ZRSbR6DhjngoAAAM (player) looking for a match with preferences:"}
+{"code":"ENOENT","errno":-2,"level":"error","message":"Failed to read Lua script for RealtimeMatchmaking: ENOENT: no such file or directory, open '/Users/mab/Desktop/paychess.com/chesspay-be/src/script/final_match.script.lua'","path":"/Users/mab/Desktop/paychess.com/chesspay-be/src/script/final_match.script.lua","stack":"Error: ENOENT: no such file or directory, open '/Users/mab/Desktop/paychess.com/chesspay-be/src/script/final_match.script.lua'\n    at readFileSync (node:fs:443:20)\n    at new RealtimeMatchmaking (/Users/mab/Desktop/paychess.com/chesspay-be/src/worker/matchmaking/realtime.matchmaking.worker.ts:45:43)\n    at new GameService (/Users/mab/Desktop/paychess.com/chesspay-be/src/internal/service/game.service.ts:41:42)\n    at Socket.<anonymous> (/Users/mab/Desktop/paychess.com/chesspay-be/src/internal/socket/socket.handler.ts:192:40)\n    at processTicksAndRejections (node:internal/process/task_queues:105:5)","syscall":"open"}
+{"level":"error","message":"Error in finding match for player: Error: Could not initialize RealtimeMatchmaking: Lua script missing or unreadable."}
+{"level":"info","message":"MongoDB connected successfully."}
+{"level":"info","message":"Connected to Redis successfully."}
+{"level":"info","message":"Initializing background workers..."}
+{"level":"info","message":"MongoDB connected successfully."}
+{"level":"info","message":"Connected to Redis successfully."}
+{"level":"info","message":"Initializing background workers..."}
+{"level":"info","message":"MongoDB connected successfully."}
+{"level":"info","message":"Connected to Redis successfully."}
+{"level":"info","message":"Initializing background workers..."}
+{"level":"info","message":"MongoDB connected successfully."}
+{"level":"info","message":"Connected to Redis successfully."}
+{"level":"info","message":"Initializing background workers..."}
+{"level":"info","message":"GameUpdateSqsWorker initialized for queue: https://sqs.ap-south-1.amazonaws.com/160885259409/GAME-DB-EVENT-SQS"}
+{"level":"info","message":"Starting SQS worker..."}
+{"level":"info","message":"Server running at http://localhost:3000"}
+{"level":"info","message":"User connected: VxWKX3SBpVJ5iJBXAAAB"}
+{"level":"info","message":"User VxWKX3SBpVJ5iJBXAAAB (player) looking for a match with preferences:"}
+{"level":"info","message":"No immediate match for user 1751118401153. Player added to Lua queue."}
+{"level":"info","message":"User VxWKX3SBpVJ5iJBXAAAB (player) added to matchmaking queue, response received null"}
+{"level":"info","message":"User connected: My56gN-pPglql-oUAAAE"}
+{"level":"info","message":"User My56gN-pPglql-oUAAAE (player) looking for a match with preferences:"}
+{"level":"info","message":"Match found via Lua for user 1751118418212!"}
+{"level":"info","message":"User My56gN-pPglql-oUAAAE (player) added to matchmaking queue, response received {\"player1Details\":{\"user_id\":\"1751118418212\",\"rating\":800,\"socket_id\":\"My56gN-pPglql-oUAAAE\",\"win_percentage\":0.77,\"black_win_percentage\":0.7,\"white_win_percentage\":0.3,\"game_type\":\"Blitz5 min\",\"username\":\"player1751118418213\"},\"player2Details\":{\"user_id\":\"1751118401153\",\"rating\":800,\"socket_id\":\"VxWKX3SBpVJ5iJBXAAAB\",\"win_percentage\":0.77,\"black_win_percentage\":0.7,\"white_win_percentage\":0.3,\"game_type\":\"Blitz5 min\",\"username\":\"player1751118401153\"}}"}
+{"level":"info","message":"Received request to create and join room for players 1751118418212 and 1751118401153)}"}
+{"level":"info","message":"Player My56gN-pPglql-oUAAAE and VxWKX3SBpVJ5iJBXAAAB joined room game-w1syaahdt"}
+{"level":"info","message":"Room game-w1syaahdt saved to Redis."}
+{"level":"info","message":"Room metadata stored for room game-w1syaahdt"}
+{"level":"info","message":"Game game-w1syaahdt started for player1751118418213 and player1751118401153"}
+{"level":"info","message":"Move received in room game-w1syaahdt from My56gN-pPglql-oUAAAE: {\"from\":\"d2\",\"to\":\"d4\"}"}
+{"level":"info","message":"Room game-w1syaahdt saved to Redis."}
+{"level":"info","message":"Move received in room game-w1syaahdt from VxWKX3SBpVJ5iJBXAAAB: {\"from\":\"d7\",\"to\":\"d5\"}"}
+{"level":"info","message":"Room game-w1syaahdt saved to Redis."}
+{"level":"info","message":"Move received in room game-w1syaahdt from My56gN-pPglql-oUAAAE: {\"from\":\"e2\",\"to\":\"e3\"}"}
+{"level":"info","message":"Room game-w1syaahdt saved to Redis."}
+{"level":"info","message":"Move received in room game-w1syaahdt from VxWKX3SBpVJ5iJBXAAAB: {\"from\":\"e7\",\"to\":\"e6\"}"}
+{"level":"info","message":"Room game-w1syaahdt saved to Redis."}
+{"level":"info","message":"Received SIGINT. Shutting down gracefully..."}
+{"level":"error","message":"Could not close connections in time, forcing shutdown."}

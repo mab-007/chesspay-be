@@ -12,7 +12,7 @@ const rewardRoute = new RewardRoute();
 
 router.use('/api', pingRouter.router);
 router.use('/payment', paymentRouter.router);
-router.use('/', userRouter.router)
+router.use('/users', userRouter.router)
 router.use('/reward', rewardRoute.router)
 
 export default router;

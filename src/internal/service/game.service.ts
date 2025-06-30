@@ -3,9 +3,10 @@ import logger from "../../utils/logger";
 import redisClient, { addUserToMatchmakingQueue } from "../../utils/redis.client";
 import RealtimeMatchmaking, { UserDetailsRedisObj } from "../../worker/matchmaking/realtime.matchmaking.worker";
 import { Server, Socket } from "socket.io";
-import { Room, rooms } from "../socket/socket.handler";
+import { Room, getRoom, saveRoom } from "../socket/socket.handler";
 import { IGame } from "../../interface/entity/game.entity.interface";
 import GameRepository from "../../repository/game.repository";
+import AccountService from "./account.service";
 
 type GameOutcome = 'W' | 'L' | 'D'; // Win, Loss, Draw
 
@@ -40,9 +41,13 @@ class GameService {
 
     private realtimeMatchmakingService = new RealtimeMatchmaking();
     private gameRepository : GameRepository;
+    private accountService : AccountService;
+
+
 
     constructor() {
         this.gameRepository = new GameRepository();
+        this.accountService = new AccountService();
     }
 
 
@@ -226,7 +231,7 @@ class GameService {
             logger.info(`Player ${player1Socket.id} and ${player2Socket.id} joined room ${roomId}`);
             const { p1Color, p2Color } = this.assignColorToUser();
 
-            const gamePlayers = [
+            const gamePlayers: { id: string; username: string; color: "white" | "black";}[] = [
                 { id: player1Socket.id, username: player1Details.username || 'Player1', color: p1Color },
                 { id: player2Socket.id, username: player2Details.username || 'Player2', color: p2Color }
             ];
@@ -239,7 +244,8 @@ class GameService {
                 currentPlayerTurn,
             }
 
-            rooms.set(roomId, newRoom);
+
+            await saveRoom(newRoom);
             logger.info(`Room metadata stored for room ${roomId}`);
 
             // Emit gameStart to everyone in the room
@@ -259,6 +265,13 @@ class GameService {
 
     public async  matchMakingRealTime(socket: Socket, username: string, preferences: any, userDetails: any, allowExtendedSearch: boolean) : Promise<Boolean> {
         try {
+            const game_amount : number = preferences.amount;
+            const isGamePossible = await this.accountService.blockAccountAmount(userDetails.user_id, game_amount);
+            if(!isGamePossible) {
+                logger.info(`Insufficent Balance in account for user ${userDetails.user_id}`)
+                socket.emit('matchmakingUpdate', { message: 'Insufficient balance in account. Please try again.' });
+                return false;
+            }
             const res : { player1Details: UserDetailsRedisObj, player2Details: UserDetailsRedisObj } | null = await this.realtimeMatchmakingService.findMatch(userDetails, allowExtendedSearch);
             logger.info(`User ${socket.id} (${username}) added to matchmaking queue, response received ${JSON.stringify(res)}`);
             if(res)
