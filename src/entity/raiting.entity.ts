@@ -5,23 +5,33 @@ const raitingSchema = new mongoose.Schema<IRaiting>({
     user_id: {
         type: String,
         required: true,
+        index: true, // Explicitly create an index for faster queries on user_id
+        unique: true,
     },
     raiting_id: {
         type: String,
         required: true,
     },
-    blitz: {
+    chess_blitz: {
         type: Object,
         required: true,
     },
-    rapid: {
+    chess_rapid: {
         type: Object,
         required: true,
     },
-    bullet: {
+    chess_bullet: {
         type: Object,
         required: true,
     },
+    tactics: {
+        type: Object,
+        required: false,
+    },
+    puzzle_rush: {
+        type: Object,
+        required: false,
+    }
 }, {
     timestamps: true,
 });

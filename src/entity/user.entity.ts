@@ -15,6 +15,10 @@ const userSchema = new mongoose.Schema<IUser>({
         unique: true,
         trim: true, // Removes whitespace from both ends of the string
     },
+    user_type: {
+        type: String,
+        required: true,
+    },
     email: {
         type: String,
         required: true,

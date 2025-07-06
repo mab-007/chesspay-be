@@ -3,10 +3,14 @@ import RazorpayService from "../../external/juspay/razorpay.external";
 import logger from "../../utils/logger";
 import { CreateOrderResponse } from "../types";
 import { IAddMoneyTransaction, IWithdrawalTransaction } from "../../interface/ui-response/api.response.interface";
+import TransactionService from "./transaction.service";
+import { ITransaction, TransactionType } from "../../interface/entity/transaction.entity.interface";
 
 class PaymentService {
 
     private razorpayServiceInstance = new RazorpayService();
+    private transactionService = new TransactionService();
+
     constructor() {
         // Initialization code can go here
     }
@@ -38,7 +42,24 @@ class PaymentService {
     async fetchAddMoneyTransactionHistory(user_id: string): Promise<Array<IAddMoneyTransaction>> {
         try {
             logger.info(`Fetching add money transaction history for user ${user_id}`);
+            const transactionList : Array<ITransaction> = await this.transactionService.fetchTransactionListByType(user_id, TransactionType.ADD_MONEY);
+            
             let addMoneyHistory : Array<IAddMoneyTransaction> = [];
+
+
+            transactionList.map((transaction) => {
+
+                let addMoneyTransaction : IAddMoneyTransaction = {
+                    user_id: transaction.user_id,
+                    txn_ref: transaction.transaction_reference || '',
+                    amount: transaction.transaction_amount,
+                    reward_amount: transaction.transaction_reward || 0,
+                    status: transaction.transaction_status.toString() || '',
+                    txn_time: transaction.transaction_date,
+                }
+
+                return addMoneyHistory.push(addMoneyTransaction);
+            })
             return addMoneyHistory;
         } catch (error) {
             logger.error('Error in fetching add money transaction history' + error);

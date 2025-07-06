@@ -1,5 +1,5 @@
 import mongoose from "mongoose";
-import { IReward } from "../interface/entity/reward.entity.inteface";
+import { IReward, RewardType } from "../interface/entity/reward.entity.inteface";
 
 const rewardSchema = new mongoose.Schema<IReward>({
     user_id: {
@@ -9,6 +9,8 @@ const rewardSchema = new mongoose.Schema<IReward>({
     reward_id: {
         type: String,
         required: true,
+        unique: true,
+        index: true,
     },
     reward_type: {
         type: String,

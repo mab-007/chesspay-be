@@ -83,6 +83,19 @@ class AccountService {
         }
     }
 
+    public async updaterRewardAmmount(user_id: string, reward_amount: number): Promise<IAccount> {
+        try {
+            const updatedAccount = await this.accountRepository.updateRewardAmount(user_id, reward_amount);
+            if(!updatedAccount) {
+                throw new Error(`Error updating reward amount for user: ${user_id}`);
+            }
+            return updatedAccount;
+        } catch(err) {
+            logger.error(`Error updating reward amount for user: ${user_id}, error: ${err}`);
+            throw new Error
+        }
+    }
+
     public async createAccount(user_id: string, account_balance: number, reward_amount_balance: number, currency: string) : Promise<IAccount> {
         try {
 

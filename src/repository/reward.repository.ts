@@ -1,4 +1,4 @@
-import { Model } from "mongoose";
+import { ClientSession, Model } from "mongoose";
 import RewardModel from "../entity/reward.entity";
 import { IReward } from "../interface/entity/reward.entity.inteface";
 import logger from "../utils/logger";
@@ -12,9 +12,10 @@ class RewardRepository {
     }
 
 
-    public async createReward(reward: IReward): Promise<IReward> {
+    public async createReward(reward: IReward, session?: ClientSession): Promise<IReward> {
         try {
-            return await this.rewardModel.create(reward);
+            const createdRewards = await this.rewardModel.create([reward], { session });
+            return createdRewards[0];
         } catch (error) {
             logger.error(`Error creating reward for user_id ${reward.user_id}: ${error}`)
             throw new Error(`Error creating reward: ${error}`);

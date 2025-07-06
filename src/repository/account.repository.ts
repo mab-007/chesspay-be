@@ -40,6 +40,15 @@ class AccountRepository {
         ).exec();
     }
 
+    public async updateRewardAmount(user_id: string, reward_amount: number) : Promise<IAccount | null> {
+        return await this.accountModel.findOneAndUpdate({user_id: user_id}, 
+            {
+                $inc: {
+                    reward_amount_balance: reward_amount
+                }
+            });
+    }
+
 }
 
 export default AccountRepository;

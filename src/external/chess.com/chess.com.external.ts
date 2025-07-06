@@ -7,8 +7,8 @@ class ChessDotComService {
     public async getChessDotComPlayerStats(username: string) : Promise<IChessDotComRaitingObj | null> {
         try {
             //https://api.chess.com/pub/player/mab_07/stats
-            const res : IChessDotComRaitingObj = await axios.get(`https://api.chess.com/pub/player/${username}/stats`);
-            return res;
+            const res = await axios.get(`https://api.chess.com/pub/player/${username}/stats`);
+            return res.data;
         } catch (err) {
             logger.error(`Error fetching chess.com player stats: ${err}`)
             return null;

@@ -18,7 +18,7 @@ class GameRepository {
     }
 
     public async getGameHistoryByUserId(user_id: string): Promise<IGame[]> {
-        return await this.gameModel.find({ user_id: user_id }).exec();
+        return await this.gameModel.find({ user_id: user_id }).sort({ game_date: -1 }).exec();
     }
 }
 

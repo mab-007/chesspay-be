@@ -17,8 +17,11 @@ class UserRouter {
 
         this.router.post('/', async (req, res) : Promise<any>=> {
             try {
-                const { username, email, country, password_hash, first_name, last_name, date_of_birth, profile_picture_url } = req.body;
-                const result = await this.userService.createUser(username, email, country, password_hash, first_name, last_name, date_of_birth, profile_picture_url);
+                const {user_type, username, email, country, fetchChessDotComData, password_hash, first_name, last_name, date_of_birth, profile_picture_url } = req.body;
+                if(!user_type || !username || !email || !country || !fetchChessDotComData) {
+                    throw new Error('Missing required fields');
+                }
+                const result = await this.userService.createUser(user_type, username, email, country, fetchChessDotComData, password_hash, first_name, last_name, date_of_birth, profile_picture_url);
                 return res.status(200).json({
                     status: 'success',
                     data: result,
