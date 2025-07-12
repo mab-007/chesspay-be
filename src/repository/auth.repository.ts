@@ -12,6 +12,10 @@ class AuthRepository {
     public async createAuth(auth: IAuth): Promise<IAuth> {
       return await this.authModel.create(auth);
     }
+
+    public async findBySupabaseId(supabaseId: string): Promise<IAuth | null> {
+      return await this.authModel.findOne({ supabase_id: supabaseId });
+    }
     
 }
 

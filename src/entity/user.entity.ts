@@ -19,6 +19,10 @@ const userSchema = new mongoose.Schema<IUser>({
         type: String,
         required: true,
     },
+    auth_id: {
+        type: String,
+        required: false,
+    },
     email: {
         type: String,
         required: true,
@@ -35,6 +39,10 @@ const userSchema = new mongoose.Schema<IUser>({
         type: String,
         required: true,
         default: 'Unknown',
+    },
+    user_phone: {
+        type: String,
+        required: false,
     },
     raiting_id: {
         type: String,

@@ -17,6 +17,12 @@ class UserRepository {
         return result;
     }
 
+    public async findByAuthId(auth: string): Promise<IUser | null> {
+        logger.info(`Fetching user with Auth ID: ${auth}`);
+        const result = await this.userModel.findOne({ auth_id: auth });
+        return result;
+    }
+
     public async create(userDetails: IUser): Promise<IUser> {
         return await this.userModel.create(userDetails);
     }

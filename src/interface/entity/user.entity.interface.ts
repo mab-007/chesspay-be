@@ -6,9 +6,11 @@ export interface IUser {
     status: string;
     country: string;
     raiting_id?: string;
+    user_phone?:string;
     password_hash?: string;
     first_name?: string;
     last_name?: string;
+    auth_id?: string;
     date_of_birth?: number;
     profile_picture_url?: string;
     is_active: boolean;

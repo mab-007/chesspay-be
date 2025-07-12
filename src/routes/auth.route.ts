@@ -13,10 +13,10 @@ class AuthRoute {
     }
 
     private initializeRoutes() {
-        this.router.post(`/signup`, async (req, res) : Promise<any> => {
+        this.router.post(`/signup`, async (req: any, res) : Promise<any> => {
             try {
                 const { uuid, token, token_expiry } = req.body;
-                await this.authService.createAuth(uuid, token, token_expiry);
+                await this.authService.createAuth(uuid, req.user.id, token, token_expiry);
                 return res.status(200).json({
                     success: true,
                     data: null,

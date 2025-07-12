@@ -15,13 +15,14 @@ class UserRouter {
 
     private initializeRoutes(): void {
 
-        this.router.post('/', async (req, res) : Promise<any>=> {
+        this.router.post('/', async (req : any, res) : Promise<any>=> {
             try {
-                const {user_type, username, email, country, fetchChessDotComData, password_hash, first_name, last_name, date_of_birth, profile_picture_url } = req.body;
-                if(!user_type || !username || !email || !country || !fetchChessDotComData) {
+                const {user_type, full_name, username, email, country, fetchChessDotComData, password_hash, first_name, last_name, date_of_birth, profile_picture_url, isLoggedInByEmailProvider } = req.body;
+                console.log(req.body);
+                if(!user_type || !full_name || !email || !country) {
                     throw new Error('Missing required fields');
                 }
-                const result = await this.userService.createUser(user_type, username, email, country, fetchChessDotComData, password_hash, first_name, last_name, date_of_birth, profile_picture_url);
+                let result = await this.userService.createUser(req.user.id, user_type, full_name, email, country, fetchChessDotComData, username, password_hash, first_name, last_name, date_of_birth, profile_picture_url);;
                 return res.status(200).json({
                     status: 'success',
                     data: result,
@@ -71,8 +72,8 @@ class UserRouter {
                 if(!userId) {
                     throw new Error('User id is required');
                 }
-                const { password_hash, first_name, last_name, date_of_birth, profile_picture_url } = req.body;
-                const result = await this.userService.updateUserProfile(userId, password_hash, first_name, last_name, date_of_birth, profile_picture_url);
+                const { username, fetchChessDotComData, password_hash, first_name, last_name, date_of_birth, profile_picture_url } = req.body;
+                const result = await this.userService.updateUserProfile(userId, username, fetchChessDotComData, password_hash, first_name, last_name, date_of_birth, profile_picture_url);
                 return res.status(200).json({
                     status: 'success',
                     data: result,
@@ -89,7 +90,6 @@ class UserRouter {
                 });
             }
         });
-
     }
 
 
