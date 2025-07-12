@@ -1,5 +1,5 @@
 import mongoose from "mongoose";
-import { ITransaction } from "../interface/entity/transaction.entity.interface";
+import { ITransaction, TransactionStatus, TransactionType } from "../interface/entity/transaction.entity.interface";
 
 
 const transactionSchema = new mongoose.Schema<ITransaction>({
@@ -19,6 +19,10 @@ const transactionSchema = new mongoose.Schema<ITransaction>({
     transaction_type: {
         type: String,
         required: true,
+    },
+    topup_amount: {
+        type: Number,
+        required: false,
     },
     transaction_amount: {
         type: Number,

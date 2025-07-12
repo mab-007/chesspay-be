@@ -22,6 +22,7 @@ redisClient.on('error', (err) => {
 });
 
 export const MATCHMAKING_QUEUE_KEY = 'matchmaking_sortedset_queue';
+export const ROOM_QUEUE_KEY = 'room_queue';
 
 
 export const addUserToMatchmakingQueue = async (userId: string, username: string, parameters: any): Promise<void> => {

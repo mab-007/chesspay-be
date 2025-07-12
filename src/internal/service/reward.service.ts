@@ -1,8 +1,10 @@
-import { IReward } from "../../interface/entity/reward.entity.inteface";
+import { randomUUID } from "crypto";
+import { ClientSession } from "mongoose";
+import { IReward, RewardType } from "../../interface/entity/reward.entity.inteface";
 import RewardRepository from "../../repository/reward.repository";
 import { ServiceConstants } from "../../utils/constant.utils"; // Corrected typo SreviceConstants -> ServiceConstants
 import logger from "../../utils/logger";
-import { v4 as uuidv4 } from 'uuid'; // Using UUID for more reliable unique IDs
+import AccountService from "./account.service";
 
 type DepositToReward = {
     depositAmount : number;
@@ -14,9 +16,12 @@ type DepositToReward = {
 class RewardService {
 
     private rewardRepository : RewardRepository;
+    private accountService: AccountService;
 
-    constructor(rewardRepository: RewardRepository) {
-        this.rewardRepository = rewardRepository;
+
+    constructor() {
+        this.rewardRepository = new RewardRepository();
+        this.accountService = new AccountService();
     }
 
 
@@ -38,12 +43,12 @@ class RewardService {
             // Using a timestamp for a unique ID is unreliable and can cause collisions.
             const rewardObj : IReward = {
                 user_id: user_id,
-                reward_id: `REWARD-${uuidv4()}`,
+                reward_id: `REWARD-${randomUUID()}`,
                 reward_amount: rewardAmount,
                 reward_status: 'ACTIVE',
                 reward_date: new Date().getTime(),
                 reward_currency: currency,
-                reward_type: 'DEPOSIT_REWARD',
+                reward_type: RewardType.ADD_MONEY_REWARD,
                 reward_description: 'REWARD_ON_DEPOSIT',
                 is_setteled: false
             }
@@ -56,12 +61,12 @@ class RewardService {
         }
     }
 
-    public async addnewReward(user_id: string, reward_amount: number, reward_currency: string, reward_type: string, reward_description?: string, reward_reference?: string) : Promise<Boolean> {
+    public async addnewReward(user_id: string, reward_amount: number, reward_currency: string, reward_type: RewardType, reward_description?: string, reward_reference?: string, session?: ClientSession) : Promise<IReward> {
         try {
 
             const rewardObj : IReward = {
                 user_id: user_id,
-                reward_id: `REWARD-${uuidv4()}`,
+                reward_id: `REWARD-${randomUUID()}`,
                 reward_amount: reward_amount,
                 reward_status: 'ACTIVE',
                 reward_date: new Date().getTime(),
@@ -73,9 +78,9 @@ class RewardService {
             }
 
             // CRITICAL: Await the promise to get the actual result.
-            const result = await this.rewardRepository.createReward(rewardObj);
-            // `!!Promise` is always true. This now correctly checks if a result was returned.
-            return !!result;
+            const result = await this.rewardRepository.createReward(rewardObj, session);
+            await this.accountService.updaterRewardAmmount(user_id, reward_amount);
+            return result;
         } catch (err) {
             logger.error(`Error adding new reward for user ${user_id}`, { error: err });
             throw new Error(`Failed to add new reward for user ${user_id}.`);

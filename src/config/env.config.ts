@@ -13,3 +13,8 @@ export const redisConfig = {
   username: process.env.REDIS_USERNAME || undefined, // Add this line
   password: process.env.REDIS_PASSWORD || undefined,
 };
+
+export const supabaseConfig = {
+  supabaseUrl: process.env.SUPABASE_URL || '',
+  supabaseKey: process.env.SUPABASE_ANON_KEY || '',
+};

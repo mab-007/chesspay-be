@@ -26,6 +26,29 @@ class AccountRepository {
         return await this.accountModel.findOneAndUpdate({account_id: account.account_id}, account, {new: true});
     }
 
+
+    public async blockAccountAmount(user_id: string, game_amount: number) : Promise<IAccount | null> {
+        return await this.accountModel.findOneAndUpdate(
+            {
+                user_id: user_id,
+                // Use $expr to compare two fields in the document.
+                // Condition: account_balance >= (blocked_amount + game_amount)
+                $expr: { $gte: [ "$account_balance", { $add: ["$blocked_amount", game_amount] } ] }
+            },
+            { $inc: { blocked_amount: game_amount } },
+            { new: true }
+        ).exec();
+    }
+
+    public async updateRewardAmount(user_id: string, reward_amount: number) : Promise<IAccount | null> {
+        return await this.accountModel.findOneAndUpdate({user_id: user_id}, 
+            {
+                $inc: {
+                    reward_amount_balance: reward_amount
+                }
+            });
+    }
+
 }
 
 export default AccountRepository;

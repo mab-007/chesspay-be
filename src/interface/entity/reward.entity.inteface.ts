@@ -1,7 +1,15 @@
+export enum RewardType {
+    ADD_MONEY_REWARD, SIGNIN_REWARD
+}
+
+export enum RewardStatus {
+    AVAILED, UNAVAILED
+}
+
 export interface IReward {
     user_id: string;
     reward_id: string;
-    reward_type: string;
+    reward_type: RewardType | String;
     reward_amount: number;
     reward_currency: string;
     reward_status: string;

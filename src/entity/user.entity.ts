@@ -6,17 +6,29 @@ const userSchema = new mongoose.Schema<IUser>({
     user_id: {
         type: String,
         required: true,
+        index: true, // Explicitly create an index for faster queries on user_id
         unique: true,
     },
     username: {
         type: String,
         required: true,
         unique: true,
+        trim: true, // Removes whitespace from both ends of the string
+    },
+    user_type: {
+        type: String,
+        required: true,
+    },
+    auth_id: {
+        type: String,
+        required: false,
     },
     email: {
         type: String,
         required: true,
         unique: true,
+        trim: true, // Removes whitespace from both ends of the string
+        lowercase: true, // Ensures email uniqueness is case-insensitive
     },
     status: {
         type: String,
@@ -27,6 +39,14 @@ const userSchema = new mongoose.Schema<IUser>({
         type: String,
         required: true,
         default: 'Unknown',
+    },
+    user_phone: {
+        type: String,
+        required: false,
+    },
+    raiting_id: {
+        type: String,
+        required: false,
     },
     password_hash: {
         type: String,

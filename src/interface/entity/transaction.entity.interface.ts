@@ -2,10 +2,11 @@ export interface ITransaction {
     user_id: string;
     transaction_id: string;
     account_id: string;
-    transaction_type: string;
+    transaction_type: TransactionType | String;
+    topup_amount: number;
     transaction_amount: number;
-    transaction_currency: string;
-    transaction_status: string;
+    transaction_currency: Currency | String;
+    transaction_status: TransactionStatus | String;
     transaction_date: number;
     transaction_description?: string;
     transaction_fee?: number;
@@ -15,4 +16,16 @@ export interface ITransaction {
     is_active: boolean;
     created_at?: Date;
     updated_at?: Date;
+}
+
+export enum TransactionType {
+    ADD_MONEY, WITHDRAWAL
+}
+
+export enum Currency {
+    INR, USD
+}
+
+export enum TransactionStatus {
+    IN_PROGRESS, SUCCESSFUL, FAILED
 }

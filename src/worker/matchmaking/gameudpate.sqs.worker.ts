@@ -34,10 +34,6 @@ class GameUpdateSqsWorker {
         this.isRunning = true;
         logger.info("Starting SQS worker...");
         this.poll();
-
-        // Register handlers for graceful shutdown
-        process.on('SIGINT', () => this.stop());
-        process.on('SIGTERM', () => this.stop());
     }
 
     /**
@@ -68,7 +64,7 @@ class GameUpdateSqsWorker {
                 if (Messages && Messages.length > 0) {
                     logger.info(`Received ${Messages.length} messages.`);
                     // Process all messages concurrently
-                    await Promise.all(Messages.map(message => this.handleMessage(message)));
+                    await Promise.all(Messages.map((message: any) => this.handleMessage(message)));
                 }
             } catch (error) {
                 logger.error("Error receiving messages from SQS:", { error });

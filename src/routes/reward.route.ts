@@ -10,16 +10,14 @@ class RewardRoute {
     constructor() {
         this.router = Router();
         this.initializeRoutes();
-        this.rewardSvc = new RewardService(new RewardRepository());
+        this.rewardSvc = new RewardService();
     }
 
     private initializeRoutes(): void {
-        // Define reward-related routes here
-        // init reward
-        this.router.get('/init', async (req, res) : Promise<any> =>{
+        this.router.post('/init', async (req, res) : Promise<any> =>{
             try {
-                const {user_id, amount, currency} = req.body;
-                const result = this.rewardSvc.calculateRewardInDepositAmount(user_id, amount, currency);
+                const {user_id, reward_amount, currency, reward_type} = req.body;
+                const result = this.rewardSvc.addnewReward(user_id, reward_amount, currency, reward_type);
                 return res.status(200).json({
                     success: true,
                     data: result,
@@ -35,9 +33,6 @@ class RewardRoute {
                 })
             }
         })
-        //Update Reward balance
-        
-        //get reward balance
     }
 }
 

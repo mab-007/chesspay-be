@@ -13,18 +13,22 @@ class UserRepository {
 
     public async findByUserId(userId: string): Promise<IUser | null> {
         logger.info(`Fetching user with ID: ${userId}`);
-        const result = await this.userModel.findById({ user_id: userId }).exec();
+        const result = await this.userModel.findOne({ user_id: userId });
+        return result;
+    }
+
+    public async findByAuthId(auth: string): Promise<IUser | null> {
+        logger.info(`Fetching user with Auth ID: ${auth}`);
+        const result = await this.userModel.findOne({ auth_id: auth });
         return result;
     }
 
     public async create(userDetails: IUser): Promise<IUser> {
-        // Placeholder for actual database interaction
         return await this.userModel.create(userDetails);
     }
 
     public async update(user_id: string, updates: Partial<IUser>): Promise<any> {
-        // Placeholder for actual database interaction
-        return await this.userModel.findOneAndReplace({ user_id: user_id }, updates);
+        return await this.userModel.findOneAndUpdate({ user_id: user_id }, updates);
     }
 }
 
