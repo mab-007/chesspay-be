@@ -62,20 +62,21 @@ class AccountService {
         }
     }
 
-    public async blockAccountAmount(user_id: string, game_amount: number): Promise<boolean> {
+    public async blockAccountAmount(user_id: string, game_amount: number): Promise<{isPossible: boolean, userAccount: IAccount}> {
         try {
+            console.log(`Attempting to block ${game_amount} for user: ${user_id}`);
             const updatedAccount = await this.accountRepository.blockAccountAmount(user_id, game_amount);
 
             if (updatedAccount) {
                 logger.info(`Successfully blocked ${game_amount} for user: ${user_id}. New blocked amount: ${updatedAccount.blocked_amount}`);
-                return true;
+                return {isPossible: true, userAccount: updatedAccount};
             }
             const account = await this.accountRepository.fetchAccountDetailsByUserId(user_id);
             if (!account) {
                 throw new Error(`Attempted to block amount for non-existent account. User ID: ${user_id}`);
             }
             logger.info(`Insufficient balance to block ${game_amount} for user: ${user_id}. Available: ${account.account_balance - account.blocked_amount}`);
-            return false;
+            return {isPossible: false, userAccount: account};
 
         } catch (err: any) {
             logger.error(`Error blocking account amount for user: ${user_id}`, { error: err.message });

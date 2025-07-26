@@ -42,7 +42,7 @@ class TransactionService {
         }
     }
 
-    public async createTransaction(user_id: string, account_id: string, amount: string, type: TransactionType): Promise<ITransaction | null> {
+    public async createTransaction(user_id: string, account_id: string, amount: string, type: TransactionType): Promise<ITransaction> {
         const topupAmount = Number(amount);
         if (isNaN(topupAmount) || topupAmount <= 0) {
             throw new Error('Invalid or non-positive amount provided.');

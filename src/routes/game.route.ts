@@ -37,7 +37,7 @@ class GameRoute {
             }
         });
 
-        this.router.post("/user/raiting", async (req, res) : Promise<any> => {
+        this.router.post("/user/rating", async (req, res) : Promise<any> => {
             try {
                 const userId : any = req.query.userId;
                 if(!userId) throw new Error("User id is required");

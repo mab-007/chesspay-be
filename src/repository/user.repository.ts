@@ -30,6 +30,16 @@ class UserRepository {
     public async update(user_id: string, updates: Partial<IUser>): Promise<any> {
         return await this.userModel.findOneAndUpdate({ user_id: user_id }, updates);
     }
+
+    public async findUsersByIds(userIds: string[]): Promise<IUser[]> {
+        if (!userIds || userIds.length === 0) {
+            return [];
+        }
+        logger.info(`Fetching users with IDs: ${userIds.join(', ')}`);
+        // Use the $in operator to find all documents where user_id is in the provided array
+        const result = await this.userModel.find({ user_id: { $in: userIds } }).exec();
+        return result;
+    }
 }
 
 export default UserRepository;

@@ -19,7 +19,7 @@ export interface ITransaction {
 }
 
 export enum TransactionType {
-    ADD_MONEY, WITHDRAWAL
+    ADD_MONEY, WITHDRAWAL, GAME_MONEY
 }
 
 export enum Currency {

@@ -15,11 +15,11 @@ class PaymentService {
         // Initialization code can go here
     }
 
-    async createOrder(amount: number, currency: string, receipt?: string, notes?: any): Promise<CreateOrderResponse> {
+    async createOrder(amount: number, currency: string, user_id: string, account_id: string, receipt?: string, notes?: any,): Promise<CreateOrderResponse> {
         try {
             logger.info(`Creating order at juspay for amount ${amount} and currency ${currency}`);
             const createOrderRes = await this.razorpayServiceInstance.createOrder(amount, currency, receipt, notes);
-            //TODO:  validate and save to db
+            await this.transactionService.createTransaction(user_id, account_id, amount.toString(), TransactionType.ADD_MONEY);
             return createOrderRes;
         } catch (error) {
             logger.error('Error in creating order at juspay'+error);

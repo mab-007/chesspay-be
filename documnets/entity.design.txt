@@ -4,7 +4,7 @@
 - - user_account_id
 - - user_signup_date
 - - user_refferal_id
-- - user_raiting
+- - user_rating
 
 - contest
 - - contest_id

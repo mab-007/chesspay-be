@@ -4,7 +4,7 @@ import redisClient, { MATCHMAKING_QUEUE_KEY, ROOM_QUEUE_KEY } from "../../utils/
 import logger from "../../utils/logger"; // For logging
 import { Room } from "../../internal/socket/socket.handler";
 
-// export interface RaitingObj {
+// export interface RatingObj {
 //     blitz: number;
 //     rapid: number;
 //     bullet: number;
@@ -21,7 +21,7 @@ export interface UserDetailsRedisObj {
     game_type: string;
     // Add username if it's part of the details and needed for game setup
     username?: string;
-
+    gameId?: string;
 }
 
 // Define an interface for the expected successful match result

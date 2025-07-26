@@ -2,17 +2,17 @@ import { randomUUID } from "crypto";
 import { IUser } from "../../interface/entity/user.entity.interface";
 import UserRepository from "../../repository/user.repository";
 import logger from "../../utils/logger";
-import { IChessDotComRaitingObj, IRaiting } from "../../interface/entity/raiting.entity.interface";
-import RaitingRepository from "../../repository/raiting.repository";
+import { IChessDotComRatingObj, IRating } from "../../interface/entity/rating.entity.interface";
 import ChessDotComService from "../../external/chess.com/chess.com.external";
 import AccountService from "./account.service";
 import { IAccountDetailsResp } from "../../interface/ui-response/api.response.interface";
 import AuthService from "./auth.service";
+import RatingRepository from "../../repository/rating.repository";
 
 class UserService {
 
     private userDetailRepository : UserRepository;
-    private raitingRepository : RaitingRepository;
+    private ratingRepository : RatingRepository;
     private chessDotComService : ChessDotComService;
     private accountService: AccountService;
     private authService: AuthService;
@@ -20,39 +20,39 @@ class UserService {
 
     constructor() {
         this.userDetailRepository = new UserRepository();
-        this.raitingRepository = new RaitingRepository();
+        this.ratingRepository = new RatingRepository();
         this.chessDotComService = new ChessDotComService();
         this.accountService = new AccountService();
         this.authService = new AuthService();
     }
 
-    public async getUserDetils(user_id: string) : Promise<{userDetail: IUser, raitingDetail: IRaiting | null, accountDetails:  IAccountDetailsResp | null}> {
+    public async getUserDetils(user_id: string) : Promise<{userDetail: IUser, ratingDetail: IRating | null, accountDetails:  IAccountDetailsResp | null}> {
         try {
             const data = await this.userDetailRepository.findByUserId(user_id);
-            const raitingData = await this.raitingRepository.getRaiting(user_id);
+            const ratingData = await this.ratingRepository.getRating(user_id);
             const accountDetails = await this.accountService.getAccountDetails(user_id);
             if(!data) {
                 throw new Error(`User not found for user id ${user_id}`)
             }
-            if(!raitingData) {
-                throw new Error(`Raiting not found for user id ${user_id}`)
+            if(!ratingData) {
+                throw new Error(`Rating not found for user id ${user_id}`)
             }
             if(!accountDetails) {
                 throw new Error(`Account not found for user id ${user_id}`)
             }
-            return {userDetail: data, raitingDetail: raitingData, accountDetails: accountDetails};
+            return {userDetail: data, ratingDetail: ratingData, accountDetails: accountDetails};
         } catch(err) {
             logger.error(`Error fetching user details for user id ${user_id}: ${err}`)
             throw new Error(`Error fetching user details for user id ${user_id}: ${err}`)
         }
     }
 
-    private async createRaiting(user_id: string, isChessDotCom?: boolean, username?: string) : Promise<IRaiting> {
+    private async createRating(user_id: string, isChessDotCom?: boolean, username?: string) : Promise<IRating> {
 
         try {
-            let chessDotComRes : IChessDotComRaitingObj | null = null;
+            let chessDotComRes : IChessDotComRatingObj | null = null;
 
-               // Fetch chess.com raiting object
+               // Fetch chess.com rating object
             if(isChessDotCom && username) 
                 chessDotComRes = await this.chessDotComService.getChessDotComPlayerStats(username);
            
@@ -62,12 +62,12 @@ class UserService {
                 chessDotComRes = {
                     chess_blitz: {
                         last: {
-                            raiting: 0,
+                            rating: 0,
                             date: new Date().getTime(),
                             rd: 0
                         },
                         best: {
-                            raiting: 0,
+                            rating: 0,
                             date: new Date().getTime(),
                             game: ''
                         },
@@ -79,12 +79,12 @@ class UserService {
                     },
                     chess_rapid: {
                         last: {
-                            raiting: 0,
+                            rating: 0,
                             date: new Date().getTime(),
                             rd: 0
                         },
                         best: {
-                            raiting: 0,
+                            rating: 0,
                             date: new Date().getTime(),
                             game: ''
                         },
@@ -96,12 +96,12 @@ class UserService {
                     },
                     chess_bullet: {
                         last: {
-                            raiting: 0,
+                            rating: 0,
                             date: new Date().getTime(),
                             rd: 0
                         },
                         best: {
-                            raiting: 0,
+                            rating: 0,
                             date: new Date().getTime(),
                             game: ''
                         },
@@ -114,24 +114,23 @@ class UserService {
                 }
             }
             
-            let raitingObj: IRaiting = {
+            let ratingObj: IRating = {
                 user_id: user_id,
-                raiting_id: 'RAITING-' + new Date().getTime(),
+                rating_id: 'RAITING-' + new Date().getTime(),
                 ...chessDotComRes
             }
 
-            if(!raitingObj) {
-                throw new Error(`Error creating raiting for user ${user_id}`)
+            if(!ratingObj) {
+                throw new Error(`Error creating rating for user ${user_id}`)
             }
 
-            const res = await this.raitingRepository.createRaiting(raitingObj);
+            const res = await this.ratingRepository.createRating(ratingObj);
             return res;
         } catch(err) {
-            logger.error(`Error creating raiting for user ${user_id}: ${err}`)
-            throw new Error(`Error creating raiting for user ${user_id}: ${err}`)
+            logger.error(`Error creating rating for user ${user_id}: ${err}`)
+            throw new Error(`Error creating rating for user ${user_id}: ${err}`)
         }
     }
-
 
     public async createUser(auth_id: string, user_type: string, full_name: string, email: string, country: string, fetchChessDotComData: boolean, username?: string, password_hash?: string, first_name?: string, last_name?: string, date_of_birth?: string, profile_picture_url?: string) : Promise<any> {
         try {
@@ -152,18 +151,20 @@ class UserService {
                     last_name: last_name || full_name.split(' ')[1],
                     date_of_birth: date_of_birth ? new Date(date_of_birth).getTime() : undefined,
                     profile_picture_url: profile_picture_url,
+                    black_win_percentage: 0,
+                    white_win_percentage: 0,
                     is_active: true,
                 }
-                const raitingResult = await this.createRaiting(userObj.user_id, fetchChessDotComData, username);
+                const ratingResult = await this.createRating(userObj.user_id, fetchChessDotComData, username);
                 const userAccount = await this.accountService.createAccount(userObj.user_id, 0, 0, 'INR');
-                userObj.raiting_id = raitingResult.raiting_id;
+                userObj.rating_id = ratingResult.rating_id;
                 const res = await this.userDetailRepository.create(userObj);               
-                return {userDetail: res, raitingDetail: raitingResult, accountDetail: userAccount, isExistingUser: false};
+                return {userDetail: res, ratingDetail: ratingResult, accountDetail: userAccount, isExistingUser: false};
 
             } else {
-                const raitingResult = await this.raitingRepository.getRaiting(userDetails.user_id);
+                const ratingResult = await this.ratingRepository.getRating(userDetails.user_id);
                 const userAccount = await this.accountService.getAccountDetails(userDetails.user_id);
-                return {userDetail: userDetails, raitingDetail: raitingResult, accountDetail: userAccount, isExistingUser: true};
+                return {userDetail: userDetails, ratingDetail: ratingResult, accountDetail: userAccount, isExistingUser: true};
 
             }
 
@@ -196,7 +197,7 @@ class UserService {
             }
             const res = await this.userDetailRepository.update(user_id, userObj);
             if(fetchChessDotComData && username) {
-                await this.updateChessDotComRaiting(user_id, username, fetchChessDotComData);
+                await this.updateChessDotComRating(user_id, username, fetchChessDotComData);
             }
             return res;
         } catch(err) {
@@ -206,23 +207,23 @@ class UserService {
     }
 
 
-    private async updateChessDotComRaiting(user_id: string, username: string, isChessDotCom: boolean) : Promise<void> {
+    private async updateChessDotComRating(user_id: string, username: string, isChessDotCom: boolean) : Promise<void> {
         try {
-            let chessDotComRes : IChessDotComRaitingObj | null = null;
+            let chessDotComRes : IChessDotComRatingObj | null = null;
 
             if(isChessDotCom && username) 
                 chessDotComRes = await this.chessDotComService.getChessDotComPlayerStats(username);
 
             if(!chessDotComRes)
-                throw Error(`Error fetching chess.com raiting`);
+                throw Error(`Error fetching chess.com rating`);
 
-            console.log(`updating chess.com raiting`)
-            let raitingObj: Partial<IRaiting> = {
+            console.log(`updating chess.com rating`)
+            let ratingObj: Partial<IRating> = {
                 ...chessDotComRes
             }
-            await this.raitingRepository.updateRaiting(user_id, raitingObj);
+            await this.ratingRepository.updateRating(user_id, ratingObj);
         } catch(err) {
-            logger.error(`Error updating chess.com raiting for user ${user_id}: ${err}`);
+            logger.error(`Error updating chess.com rating for user ${user_id}: ${err}`);
         }
     }
 

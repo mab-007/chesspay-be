@@ -1,14 +1,14 @@
 import mongoose from "mongoose";
-import { IRaiting } from "../interface/entity/raiting.entity.interface";
+import { IRating } from "../interface/entity/rating.entity.interface";
 
-const raitingSchema = new mongoose.Schema<IRaiting>({
+const ratingSchema = new mongoose.Schema<IRating>({
     user_id: {
         type: String,
         required: true,
         index: true, // Explicitly create an index for faster queries on user_id
         unique: true,
     },
-    raiting_id: {
+    rating_id: {
         type: String,
         required: true,
     },
@@ -36,6 +36,6 @@ const raitingSchema = new mongoose.Schema<IRaiting>({
     timestamps: true,
 });
 
-const RaitingModel = mongoose.model<IRaiting>('raiting', raitingSchema);
+const RatingModel = mongoose.model<IRating>('rating', ratingSchema);
 
-export default RaitingModel;
+export default RatingModel;

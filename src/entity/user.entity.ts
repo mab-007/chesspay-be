@@ -44,7 +44,7 @@ const userSchema = new mongoose.Schema<IUser>({
         type: String,
         required: false,
     },
-    raiting_id: {
+    rating_id: {
         type: String,
         required: false,
     },
@@ -68,6 +68,16 @@ const userSchema = new mongoose.Schema<IUser>({
         type: String,
         required: false,
         default: '',
+    },
+    black_win_percentage: {
+        type: Number,
+        required: true,
+        default: 0,
+    },
+    white_win_percentage: {
+        type: Number,
+        required: true,
+        default: 0,
     },
     is_active: {
         type: Boolean,

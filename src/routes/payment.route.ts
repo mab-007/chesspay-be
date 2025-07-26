@@ -17,12 +17,12 @@ class PaymentRoute {
         this.router.post('/create-order', async (req, res) : Promise<any>=> {
 
             try {
-                const { amount, currency, receipt, notes } = req.body;
+                const { amount, currency, receipt, notes, user_id, account_id } = req.body;
                 if (!amount || !currency) {
                     return res.status(400).json({ error: 'Amount and currency are required' });
                 }
                 // Call the payment service to create an order
-                const createOrderRes = await this.paymentService.createOrder(amount, currency, receipt, notes);
+                const createOrderRes = await this.paymentService.createOrder(amount, currency, user_id, account_id, receipt, notes);
                 if (!createOrderRes) {
                     throw new Error('Failed to create order');
                 }
