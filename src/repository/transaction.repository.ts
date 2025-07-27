@@ -30,6 +30,13 @@ class TransactionRepository {
             { session }).exec();
     }
 
+    public async updateTransaction(transactionId: string, txnObj: Partial<ITransaction>) : Promise<Boolean> {
+        return !!await this.transactionModel.findOneAndUpdate(
+            {transaction_id: transactionId},
+            {...txnObj}
+        ).exec();
+    }
+
     public async getTransactionByType(userId: string, transactionType: TransactionType): Promise<ITransaction[]> {
         return await this.transactionModel.find({ user_id: userId, transaction_type: transactionType }).exec();
     }

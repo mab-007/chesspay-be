@@ -1,10 +1,10 @@
 import axios from "axios";
 import logger from "../../utils/logger";
-import { IChessDotComRaitingObj } from "../../interface/entity/raiting.entity.interface";
+import { IChessDotComRatingObj } from "../../interface/entity/rating.entity.interface";
 
 class ChessDotComService {
 
-    public async getChessDotComPlayerStats(username: string) : Promise<IChessDotComRaitingObj | null> {
+    public async getChessDotComPlayerStats(username: string) : Promise<IChessDotComRatingObj | null> {
         try {
             //https://api.chess.com/pub/player/mab_07/stats
             const res = await axios.get(`https://api.chess.com/pub/player/${username}/stats`);

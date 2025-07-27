@@ -30,9 +30,6 @@ class RazorpayService {
             }
 
             const order : Orders.RazorpayOrder = await this.razorpayInstance.orders.create(options);
-            
-            // Read current orders, add new order, and write back to the file
-
             return order; // Send order details to frontend, including order ID
         } catch (error) {
             logger.error(error);

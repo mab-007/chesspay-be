@@ -1,4 +1,4 @@
-import { Model } from "mongoose";
+import { ClientSession, Model } from "mongoose";
 import { IAccount } from "../interface/entity/account.entity.interface";
 import AccountSchemaModel from "../entity/account.entity";
 
@@ -22,8 +22,8 @@ class AccountRepository {
         return await this.accountModel.findOne({user_id: user_id});
     }
 
-    public async updateAccountBalance(account: IAccount) : Promise<IAccount | null> {
-        return await this.accountModel.findOneAndUpdate({account_id: account.account_id}, account, {new: true});
+    public async updateAccountBalance(account: IAccount, session?: ClientSession) : Promise<IAccount | null> {
+        return await this.accountModel.findOneAndUpdate({account_id: account.account_id}, account, { session });
     }
 
 
@@ -39,6 +39,18 @@ class AccountRepository {
             { new: true }
         ).exec();
     }
+
+    public async unBlockAccountAmount(user_id: string, unblock_amount: number) : Promise<IAccount | null> {
+        return await this.accountModel.findOneAndUpdate(
+            {
+                user_id: user_id,
+                $expr: { $gte: [ "$account_balance", { $add: ["$unblocked_amount", -unblock_amount] } ] }
+            },
+            { $inc: { blocked_amount: -unblock_amount } },
+            { new: true }
+        ).exec();
+    }
+
 
     public async updateRewardAmount(user_id: string, reward_amount: number) : Promise<IAccount | null> {
         return await this.accountModel.findOneAndUpdate({user_id: user_id}, 

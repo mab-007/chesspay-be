@@ -42,7 +42,7 @@ class TransactionService {
         }
     }
 
-    public async createTransaction(user_id: string, account_id: string, amount: string, type: TransactionType): Promise<ITransaction | null> {
+    public async createTransaction(user_id: string, account_id: string, amount: string, type: TransactionType, transaction_nature: String): Promise<ITransaction> {
         const topupAmount = Number(amount);
         if (isNaN(topupAmount) || topupAmount <= 0) {
             throw new Error('Invalid or non-positive amount provided.');
@@ -63,6 +63,7 @@ class TransactionService {
                     rewardAmount = depositDetails.rewardAmount;
                 }
 
+                console.log('transaction type : ' +type);
                 // If there's a reward, create it within the same transaction
                 if (rewardAmount > 0) {
                     reward = await this.rewardService.addnewReward(
@@ -85,6 +86,7 @@ class TransactionService {
                     transaction_amount: actualAmount,
                     transaction_currency: Currency.INR,
                     transaction_status: TransactionStatus.IN_PROGRESS,
+                    transaction_nature: transaction_nature,
                     transaction_date: Date.now(),
                     transaction_description: TransactionType[type], // More descriptive (e.g., "ADD_MONEY")
                     transaction_fee: 0,
@@ -107,14 +109,19 @@ class TransactionService {
             logger.error(`Error creating transaction for user ${user_id}:`, { error, amount, type });
             throw error; // Re-throw the original error to be handled by the caller
         } finally {
+            await session.commitTransaction();
             await session.endSession(); // Ensure the session is always closed
         }
     }
     
 
-    public async updateTransactionStatus(transactionId: string, status: TransactionStatus, session?: ClientSession): Promise<ITransaction | null> {
+    public async updateTransactionStatus(transactionId: string, status: TransactionStatus, session?: ClientSession): Promise<ITransaction> {
         try {
+            const session = await mongoose.startSession();
             const updatedTransaction = await this.transactionRepository.updateTransactionStatus(transactionId, status, session);
+            if (!updatedTransaction) {
+                throw new Error('Failed to update transaction status.');
+            }
             return updatedTransaction;
         } catch (error) {
             logger.error('Error updating transaction status:', error);
@@ -122,6 +129,20 @@ class TransactionService {
         }
     }
 
+
+    public async udpateRzPaymentDetails(transactionId: string, txnStatus: TransactionStatus, order_id: string, metadata: any) : Promise<void> {
+        try {
+            const txnObj : Partial<ITransaction> = {
+                order_id: order_id,
+                transaction_status: txnStatus,
+                rzp_metadata: metadata
+            }
+            await this.transactionRepository.updateTransaction(transactionId, txnObj);
+        } catch(err) {
+            logger.error(`Error in updating payment detals for ${transactionId} orderId: ${order_id}`, err);
+            throw new Error(`Error in updating payment detals for ${transactionId} orderId: ${order_id} with error ${err}`);
+        }
+    }
 
     public async fetchTransactionListByType(userId: string, transactionType: TransactionType): Promise<Array<ITransaction>> {
         try {

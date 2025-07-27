@@ -5,7 +5,7 @@ export interface IUser {
     email: string;
     status: string;
     country: string;
-    raiting_id?: string;
+    rating_id?: string;
     user_phone?:string;
     password_hash?: string;
     first_name?: string;
@@ -13,6 +13,8 @@ export interface IUser {
     auth_id?: string;
     date_of_birth?: number;
     profile_picture_url?: string;
+    black_win_percentage: number;
+    white_win_percentage: number;
     is_active: boolean;
     created_at?: Date;
     updated_at?: Date;

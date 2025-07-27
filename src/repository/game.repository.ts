@@ -20,6 +20,14 @@ class GameRepository {
     public async getGameHistoryByUserId(user_id: string): Promise<IGame[]> {
         return await this.gameModel.find({ user_id: user_id }).sort({ game_date: -1 }).exec();
     }
+
+    public async findByUserId(user_id: string): Promise<IGame | null> {
+        return await this.gameModel.findOne({ user_id: user_id });
+    }
+
+    public async findByGameId(game_id: string): Promise<IGame | null> {
+        return await this.gameModel.findOne({ game_id: game_id });
+    }
 }
 
 export default GameRepository;

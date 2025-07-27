@@ -1,4 +1,4 @@
-import { SQSClient, ReceiveMessageCommand, DeleteMessageCommand, Message } from "@aws-sdk/client-sqs";
+import { SQSClient, ReceiveMessageCommand, DeleteMessageCommand, Message, SendMessageCommand } from "@aws-sdk/client-sqs";
 import logger from "../../utils/logger";
 // You would import the relevant service to process the message payload.
 // import gameService from "../../internal/service/game.service";
@@ -106,10 +106,29 @@ class GameUpdateSqsWorker {
 
         const gameUpdatePayload = JSON.parse(message.Body);
 
-        // --- YOUR BUSINESS LOGIC GOES HERE ---
-        // Example: await gameService.applyMove(gameUpdatePayload);
-        logger.info("Game update data:", { data: gameUpdatePayload });
+        switch(gameUpdatePayload.key) {
+            case 'makeMove': 
+                break;
+            case 'gameOver':
+                break;
+            case 'disconnected':
+                break;
+            default:
+                return;
+        }
     }
+
+
+
+
+    public async pushMessage(message: any): Promise<void> {
+        const sendMessageCommand = new SendMessageCommand({
+            QueueUrl: this.queueUrl,
+            MessageBody: JSON.stringify(message),
+        });
+        await this.sqsClient.send(sendMessageCommand);
+    }
+
 }
 
 export { GameUpdateSqsWorker };

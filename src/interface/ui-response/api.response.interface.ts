@@ -17,8 +17,8 @@ export interface IGameHistoryResposne {
     black_player_id: string;
     white_player_id: string;
     game_winner_id: string;
-    white_player_raiting: number;
-    black_player_raiting: number;
+    white_player_rating: number;
+    black_player_rating: number;
 }
 
 export interface IAddMoneyTransaction {
