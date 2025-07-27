@@ -1,9 +1,8 @@
 import { io } from "../..";
 import logger from "../../utils/logger";
-import redisClient, { addUserToMatchmakingQueue } from "../../utils/redis.client";
 import RealtimeMatchmaking, { UserDetailsRedisObj } from "../../worker/matchmaking/realtime.matchmaking.worker";
-import { Server, Socket } from "socket.io";
-import { Room, getRoom, saveRoom, saveTournamentRoom } from "../socket/socket.handler";
+import {  Socket } from "socket.io";
+import { Room, saveRoom, saveTournamentRoom } from "../socket/socket.handler";
 import { IGame } from "../../interface/entity/game.entity.interface";
 import GameRepository from "../../repository/game.repository";
 import AccountService from "./account.service";
@@ -14,7 +13,7 @@ import { LeaderBoardElement } from "../../types/user.types";
 import EloRank from 'elo-rank';
 import TransactionService from "./transaction.service";
 import { TransactionType } from "../../interface/entity/transaction.entity.interface";
-
+import { ServiceConstants } from "../../utils/constant.utils";
 type GameOutcome = 'W' | 'L' | 'D'; // Win, Loss, Draw
 
 interface PlayerStats {
@@ -37,9 +36,7 @@ export interface MatchedPair {
     player1Color: 'white' | 'black';
 }
 
-const INITIAL_RATING_DIFFERENCE = 25;
-const RATING_DIFFERENCE_INCREMENT = 25;
-const MAX_RATING_ITERATIONS = 10; // Max attempts to widen rating gap (e.g., up to 25 * 10 = 250 points)
+// Max attempts to widen rating gap (e.g., up to 25 * 10 = 250 points)
 // Define realistic min/max rating if applicable, to stop iteration.
 // const MIN_RATING = 0;
 // const MAX_RATING = 3000;
@@ -60,6 +57,105 @@ class GameService {
         this.transactionService = new TransactionService();
     }
 
+    public async getGameDetailsById(game_id: string) : Promise<IGame> {
+        try {
+            const res = await this.gameRepository.findByGameId(game_id);
+            if(!res) throw new Error(`Error fetching game details for game ${game_id}`);
+            return res;
+        } catch (err) {
+            logger.error(`Error fetching game details for game ${game_id}: ${err}`);
+            throw new Error(`Error fetching game details for game ${game_id}: ${err}`);
+        }
+    }
+
+    public async processGameOverEvent(game_id: string, messageBody: any) : Promise<void> {
+        try {
+            const { game_id, user_id, game_result, room } = messageBody.body;
+
+            const gameDeatils = await this.getGameDetailsById(game_id);
+            const winner_id = room.winner_id;
+            const gameObj : Partial<IGame> = {
+                game_status: 'COMPLETED',
+                game_result: game_result,
+                game_winner_id: winner_id
+            }            
+            const res = await this.gameRepository.updateGame(gameObj);
+            const getWinnerAccountDetails = await this.accountService.getAccountDetails(game_result);
+
+            if((game_result ==='DRAW' || game_result === 'ABORT')) {
+                await this.accountService.unBlockAndUpdateAccountAmount(user_id, gameDeatils.game_amount);
+                await this.hadleRatingChange(room, winner_id, user_id, game_result, gameDeatils.game_type);
+            } else if(game_result === 'WIN' && winner_id === user_id) {
+                await this.transactionService.createTransaction(user_id, getWinnerAccountDetails.account_id, gameDeatils.winning_amount.toString(), TransactionType.GAME_MONEY, 'CREDIT' );
+                await this.accountService.updateAccountBalance(user_id, getWinnerAccountDetails.account_id, (gameDeatils.winning_amount - gameDeatils.game_amount), 'credit');
+                await this.accountService.unBlockAndUpdateAccountAmount(user_id, gameDeatils.game_amount);
+                await this.hadleRatingChange(room, winner_id, user_id, game_result, gameDeatils.game_type);
+            } else if(winner_id != user_id) {
+                await this.transactionService.createTransaction(user_id, getWinnerAccountDetails.account_id, gameDeatils.winning_amount.toString(), TransactionType.GAME_MONEY, 'DEBIT' );
+                await this.accountService.unBlockAndUpdateAccountAmount(user_id, gameDeatils.game_amount);
+                await this.accountService.updateAccountBalance(user_id, getWinnerAccountDetails.account_id, gameDeatils.game_amount, 'debit');
+                await this.hadleRatingChange(room, winner_id, user_id, game_result, gameDeatils.game_type);
+            }
+            if(!res) throw new Error(`Error processing game over event`);
+        } catch (err){
+            logger.error(`Error processing game over event: ${err}`);
+            throw new Error(`Error processing game over event: ${err}`);
+        }
+    }
+
+    private async hadleRatingChange (room: Room, winner_id: string, user_id: string, game_status: string, game_type: string) : Promise<IRating> {
+        try {
+            const resultPointsChange : { win: number, draw: number, loose: number  } = room.gameResultPoints
+            
+            if(winner_id === user_id && game_status === 'WIN') {
+                return await this.updateGameRatingByType(user_id, resultPointsChange.win, game_type);
+            } else if(winner_id !== user_id && game_status === 'LOOSE') {
+                return await this.updateGameRatingByType(winner_id, -resultPointsChange.loose, game_type);
+            } else {
+                return await this.updateGameRatingByType(user_id, resultPointsChange.draw, game_type);
+            }
+        } catch(err) {
+            logger.error(`Error handling rating change: ${err}`);
+            throw new Error(`Error handling rating change: ${err}`);
+        }
+    }
+
+    private async updateGameRatingByType(user_id: string, points: number, game_type: string) : Promise<IRating> {
+        try {
+            const userRaiting = await this.ratingRepository.getRating(user_id);
+            if(!userRaiting) throw new Error(`Error fetching user rating for user ${user_id}`);
+            let x = userRaiting.chess_blitz
+            
+            switch(game_type) {
+                case 'blitz':
+                    userRaiting.chess_blitz.last.rating = points;
+                    userRaiting.chess_blitz.last.date = new Date().getTime();
+                    break;
+                case 'rapid':
+                    userRaiting.chess_rapid.last.rating = points;
+                    userRaiting.chess_rapid.last.date = new Date().getTime();
+                    break;
+                case 'bullet':
+                    userRaiting.chess_bullet.last.rating = points;
+                    userRaiting.chess_bullet.last.date = new Date().getTime();
+                    break;
+                case 'classic':
+                    logger.info('Method not implemented!!')
+                    break;
+                default:
+                    logger.info('Unknown game type')
+                    break;
+            }
+            
+            const updatedRaiting = await this.ratingRepository.updateRating(user_id, userRaiting);
+            if(!updatedRaiting) throw new Error(`Error updating game rating by type`);
+            return updatedRaiting;
+        } catch(err) {
+            logger.error(`Error updating game rating by type: ${err}`);
+            throw new Error(`Error updating game rating by type: ${err}`);
+        }
+    }
+
     private calculateStreakSimilarity(streak1: GameOutcome[], streak2: GameOutcome[]): number {
         let similarity = 0;
         const len = Math.min(streak1.length, streak2.length, 10); // Consider only up to 10 games
@@ -76,7 +172,6 @@ class GameService {
         let p2Color: 'white' | 'black' =  p1Color === 'white' ? 'black' : 'white';
         return {  p1Color: p1Color, p2Color: p2Color };
     }
-
 
     public async updateGameMove(game_id: string, game_moves_fen: string) : Promise<void> {
         try {
@@ -105,17 +200,21 @@ class GameService {
         }
     }
 
-    public async createNewGame(user_id: string, game_type: string, transaction_id: string, elo_rating: number) : Promise<IGame> {
+    public async createNewGame(user_id: string, game_type: string, transaction_id: string, elo_rating: number, game_amount: number, game_entry_amount: number) : Promise<IGame> {
         try {
             const gameObj : IGame = {
                 user_id: user_id,
                 game_id: 'GAME-' + new Date().getTime(),
                 game_type: game_type,
                 elo_rating_change: 0,
+                game_amount: game_amount,
+                game_entry_amount: game_entry_amount,
+                winning_amount: game_amount*ServiceConstants.P2P_GAME_WINNING_RATE,
+                platform_fee: game_amount*ServiceConstants.P2P_GAME_PLATFORM_FEE,
                 elo_rating: elo_rating,
                 game_room_id: 'ROOM-' + new Date().getTime(),
                 game_status: 'FINDING_MATCH',
-                transaction_id: transaction_id,
+                transaction_id: [transaction_id],
                 game_date: new Date()
             }
             const res = await this.gameRepository.createGame(gameObj);
@@ -217,6 +316,7 @@ class GameService {
                 players: gamePlayers.map(p => ({ socketId: p.id, user_id: p.user_id, username: p.username, color: p.color as 'white' | 'black', isConnected: true })),
                 currentPlayerTurn,
                 gameResultPoints,
+                gameConfig: {},
                 blackMovesArray: [],
                 whiteMovesArray: []
             }
@@ -240,10 +340,6 @@ class GameService {
         }
     }
 
-
-
-
-
     public async createAndJoinTournamentsRoom(leaderboardArray: Array<LeaderBoardElement> ) : Promise<string> {
         try { 
             const roomId = `game-${Math.random().toString(36).substring(2, 11)}`;
@@ -264,16 +360,7 @@ class GameService {
     /**
      * 
      * @param socket 
-    user_id: string; // Use lowercase primitive types
-    rating: number;
-    socket_id: string;
-    win_percentage: number;
-    black_win_percentage: number;
-    white_win_percentage: number;
-    game_type: string;
-    // Add username if it's part of the details and needed for game setup
-    username?: string;
-
+     * This is only p2p realtime matchmaking tournaments will be seperate 
      * @param username 
      * @param preferences 
      * @param game_amount 
@@ -281,17 +368,17 @@ class GameService {
      * @param allowExtendedSearch 
      * @returns 
      */
-    public async  matchMakingRealTime(socket: Socket, username: string, preferences: any, game_amount: number, userDetails: any, allowExtendedSearch: boolean) : Promise<IGame | null> {
+    public async  matchMakingRealTime(socket: Socket, username: string, preferences: any, game_entry_amount: number, userDetails: any, allowExtendedSearch: boolean) : Promise<IGame | null> {
         try {
-            console.log("preferences: "+ preferences + game_amount)
-            const blockAmountRes = await this.accountService.blockAccountAmount(userDetails.user_id, game_amount);
+            console.log("preferences: "+ preferences + game_entry_amount)
+            const blockAmountRes = await this.accountService.blockAccountAmount(userDetails.user_id, game_entry_amount);
             const isGamePossible = blockAmountRes.isPossible;
             if(!isGamePossible) {
                 logger.info(`Insufficent Balance in account for user ${userDetails.user_id}`)
                 socket.emit('matchmakingUpdate', { message: 'Insufficient balance in account. Please try again.' });
                 return null;
             }
-            const transaction = await this.transactionService.createTransaction(userDetails.user_id, blockAmountRes.userAccount.account_id, game_amount.toString(), TransactionType.GAME_MONEY);
+            const transaction = await this.transactionService.createTransaction(userDetails.user_id, blockAmountRes.userAccount.account_id, game_entry_amount.toString(), TransactionType.GAME_MONEY, 'DEBIT');
             const res : { player1Details: UserDetailsRedisObj, player2Details: UserDetailsRedisObj } | null = await this.realtimeMatchmakingService.findMatch(userDetails, allowExtendedSearch);
             logger.info(`User ${socket.id} (${username}) added to matchmaking queue, response received ${JSON.stringify(res)}`);
             let gameObj = null;
@@ -299,7 +386,7 @@ class GameService {
                 const gameResultPoints = this.getEloRatingChange(res?.player1Details.rating || 0, res?.player2Details.rating || 0);
                 gameObj = await this.createAndJoinRoom(socket, res.player1Details, res.player2Details, gameResultPoints);
             } else
-                gameObj = await this.createNewGame(userDetails.user_id, preferences, transaction.transaction_id, userDetails.rating);
+                gameObj = await this.createNewGame(userDetails.user_id, preferences, transaction.transaction_id, userDetails.rating, game_entry_amount*2, game_entry_amount);
             return gameObj;
         } catch(err) {
             logger.error(`Error adding user with ${socket.id} and username ${username} to matchmaking queue: ${err}`);
@@ -342,9 +429,6 @@ class GameService {
 
     private getEloRatingChange(whitePlayerRating: number, blackPlayerRating: number) : { win: number, draw: number, loose: number  } {
         try {
-                var playerA = whitePlayerRating;
-                var playerB = blackPlayerRating;
-
                 //Gets expected score for first parameter
                 var expectedScoreA = this.elo.getExpected(whitePlayerRating, blackPlayerRating);
                 var expectedScoreB = this.elo.getExpected(blackPlayerRating, whitePlayerRating);

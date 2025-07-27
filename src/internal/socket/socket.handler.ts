@@ -3,6 +3,9 @@ import logger from '../../utils/logger';
 import GameService from '../service/game.service';
 import redisClient from '../../utils/redis.client';
 import { IGame } from '../../interface/entity/game.entity.interface';
+import { GameUpdateSqsWorker } from '../../worker/matchmaking/gameudpate.sqs.worker';
+
+const gameUpdateSqsWorker = new GameUpdateSqsWorker();
 
 export interface Room {
   id: string;
@@ -10,6 +13,7 @@ export interface Room {
   boardState?: any; // Placeholder for your chess game state
   currentPlayerTurn?: string; // socketId of the player whose turn it is
   gameResultPoints?: any;
+  gameConfig?: any;
   blackMovesArray: Array<string>;
   whiteMovesArray: Array<string>;
 }
@@ -322,7 +326,17 @@ export default function initializeSocketIO(io: Server) {
 
           // Broadcast the move to the other player in the room
           socket.to(roomId).emit('opponentMove', { move, nextPlayerTurn: room.currentPlayerTurn, room });
-          //TODO: Push event to queue for db entry
+          const messageBody = {
+              key: 'makeMove',
+              body: {
+                user_id: p?.user_id,
+                socket_id: p?.socketId,
+                room_id: roomId,
+                color: color,
+                move: move
+              }
+          }
+          await gameUpdateSqsWorker.pushMessage(messageBody)
         } else {
           logger.warn(`Invalid move attempt in room ${roomId} from ${socket.id}`);
           // Optionally, send an error back to the sender

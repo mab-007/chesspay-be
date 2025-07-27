@@ -52,6 +52,29 @@ class GameRoute {
                 });
             }
         });
+
+
+        this.router.post("/:id", async (req, res) : Promise<any> => {
+            try {
+                const gameId : any = req.params.id;
+                if(!gameId) throw new Error("Game id is required");
+                const result = await this.gameService.getGameDetailsById(gameId);
+                return res.status(200).json({ 
+                    success: true, 
+                    data: result, 
+                    message: "Game details fetched successfully", 
+                    error: null 
+                });
+            } catch (error) {
+                logger.error(`Error in fetching game detils for game: ${req.params.id}`);
+                return res.status(500).json({ 
+                    success: false, 
+                    data: null, 
+                    message: "Internal Server Error", 
+                    error: "Internal Server Error" 
+                });
+            }
+        })
     }
 }
 

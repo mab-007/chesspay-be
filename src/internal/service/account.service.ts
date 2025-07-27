@@ -1,3 +1,4 @@
+import { ClientSession } from "mongoose";
 import { IAccount } from "../../interface/entity/account.entity.interface";
 import { IAccountDetailsResp } from "../../interface/ui-response/api.response.interface";
 import AccountRepository from "../../repository/account.repository";
@@ -36,7 +37,7 @@ class AccountService {
         }
     }
 
-    public async updateAccountBalance(user_id: string, account_id: string, amount: number, type: 'credit' | 'debit'): Promise<IAccount> {
+    public async updateAccountBalance(user_id: string, account_id: string, amount: number, type: 'credit' | 'debit', session?: ClientSession): Promise<IAccount> {
         try {
             const fetchAccObj = await this.accountRepository.fetchAccountDetailsByAccountId(account_id);
             if(!fetchAccObj) {
@@ -52,13 +53,34 @@ class AccountService {
                 throw new Error(`Insufficient balance for user: ${user_id}`);
             }
 
-            const result = await this.accountRepository.updateAccountBalance(fetchAccObj);
+            const result = await this.accountRepository.updateAccountBalance(fetchAccObj, session);
             if(!result) throw new Error(`Error updating account balance for user: ${user_id}`);
 
             return result;
         } catch (err) {
             logger.error(`Error updating account balance for user: ${user_id}, error: ${err}`);
             throw new Error(`Error updating account balance for user: ${user_id}, error: ${err}`);
+        }
+    }
+
+    public async unBlockAndUpdateAccountAmount(user_id: string, unblock_amount: number ): Promise<{isPossible: boolean, userAccount: IAccount}> {
+        try {
+            logger.info(`Attempting to unblock ${unblock_amount} for user: ${user_id}`);
+            const updatedAccount = await this.accountRepository.unBlockAccountAmount(user_id, unblock_amount);
+
+            if (updatedAccount) {
+                logger.info(`Successfully blocked ${unblock_amount} for user: ${user_id}. New blocked amount: ${updatedAccount.blocked_amount}`);
+                return {isPossible: true, userAccount: updatedAccount};
+            }
+            const account = await this.accountRepository.fetchAccountDetailsByUserId(user_id);
+            if (!account) {
+                throw new Error(`Attempted to block amount for non-existent account. User ID: ${user_id}`);
+            }
+            return {isPossible: false, userAccount: account};
+
+        } catch (err: any) {
+            logger.error(`Error blocking account amount for user: ${user_id}`, { error: err.message });
+            throw new Error(`A server error occurred while trying to block funds for user: ${user_id}`);
         }
     }
 

@@ -17,10 +17,15 @@ const gameSchema = new mongoose.Schema<IGame>({
     game_status: { type: String, required: true },
     game_winner_id: { type: String, required: false },
     game_moves_fen: [{ type: String, required: false }],
+    platform_fee: { type: Number, required: true},
     game_result: { type: String, required: false },
-    transaction_id: { type: String, required: false },
+    game_amount: { type: Number, required: true },
+    game_entry_amount: { type: Number, required: true },
+    winning_amount: { type: Number, required: true },
+    transaction_id: { type: [String], required: false },
     game_date: { type: Date, required: true },
     tournament_id: { type: String, required: false },
+    metadata: { type: Object, required: false },
 }, {
     timestamps: true,
 });

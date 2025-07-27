@@ -4,22 +4,28 @@ import logger from "../../utils/logger";
 import { CreateOrderResponse } from "../types";
 import { IAddMoneyTransaction, IWithdrawalTransaction } from "../../interface/ui-response/api.response.interface";
 import TransactionService from "./transaction.service";
-import { ITransaction, TransactionType } from "../../interface/entity/transaction.entity.interface";
+import { ITransaction, TransactionStatus, TransactionType } from "../../interface/entity/transaction.entity.interface";
+import mongoose from "mongoose";
+import AccountService from "./account.service";
 
 class PaymentService {
 
     private razorpayServiceInstance = new RazorpayService();
     private transactionService = new TransactionService();
+    private accountService : AccountService;
+
 
     constructor() {
         // Initialization code can go here
+        this.accountService = new AccountService();
     }
 
     async createOrder(amount: number, currency: string, user_id: string, account_id: string, receipt?: string, notes?: any,): Promise<CreateOrderResponse> {
         try {
             logger.info(`Creating order at juspay for amount ${amount} and currency ${currency}`);
+            const txn = await this.transactionService.createTransaction(user_id, account_id, amount.toString(), TransactionType.ADD_MONEY, 'CREDIT');
             const createOrderRes = await this.razorpayServiceInstance.createOrder(amount, currency, receipt, notes);
-            await this.transactionService.createTransaction(user_id, account_id, amount.toString(), TransactionType.ADD_MONEY);
+            await this.transactionService.udpateRzPaymentDetails(txn.transaction_id, TransactionStatus.ORDER_IN_PROGRESSS, createOrderRes.id, createOrderRes);
             return createOrderRes;
         } catch (error) {
             logger.error('Error in creating order at juspay'+error);
@@ -31,7 +37,14 @@ class PaymentService {
         try {
             logger.info(`Verifying payment at juspay for orderId ${orderId} and paymentId ${paymentId}`);
             const isVerified = await this.razorpayServiceInstance.verifyPayment(orderId, paymentId, signature);
-            //TODO: validate and save to db
+            const session = await mongoose.startSession();
+
+            if(isVerified){
+                const txn = await this.transactionService.updateTransactionStatus(orderId, TransactionStatus.SUCCESSFUL, session);
+                await this.accountService.updateAccountBalance(txn.user_id, txn.account_id, txn.transaction_amount, 'credit', session);
+            }
+            else
+                await this.transactionService.updateTransactionStatus(orderId, TransactionStatus.FAILED, session)
             return isVerified;
         } catch (error) {
             logger.error('Error in verifying payment at juspay' + error);
